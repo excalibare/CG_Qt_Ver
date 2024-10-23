@@ -1,7 +1,4 @@
 // #include "mainwindow.h"
-
-#include <QApplication>
-
 #include <QApplication>
 #include <QWidget>
 #include <cmath>
@@ -1715,9 +1712,9 @@ int main(int argc, char* argv[]) {
 
 
 int main(int argc, char *argv[]) {
-  QApplication a(argc, argv);
-  // MainWindow w;
-  MainWindow *w = new MainWindow();
-  w->show();
-  return a.exec();
+    QApplication a(argc, argv);
+    // MainWindow w;
+    MainWindow *w = new MainWindow();
+    w->show();
+    return a.exec();
 }
