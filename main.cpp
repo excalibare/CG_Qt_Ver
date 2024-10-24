@@ -14,9 +14,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ShapeDrawer *myshapedrawer = ui->widget;
     QPushButton *clearButton = ui->Clear;
-    clearButton->setText("Clear!");
-    QObject::connect(clearButton, &QPushButton::clicked, myshapedrawer, &ShapeDrawer::Clear);
+    clearButton->setText("Clear");
+    QPushButton *colorButton = ui->Color;
+    colorButton->setText("SetColor");
 
+    // 连接选择变化信号(槽函数)
+
+    // 连接清空按钮
+    QObject::connect(clearButton, &QPushButton::clicked, myshapedrawer, &ShapeDrawer::Clear);
+    // 连接颜色选择按钮，打开颜色选择器
+    QObject::connect(colorButton, &QPushButton::clicked, [=]() {
+        QColor color = QColorDialog::getColor(Qt::black, this, "Choose Line Color");
+        if (color.isValid()) {
+            myshapedrawer->setCurrentLineColor(color);
+        }
+    });
 }
 
 MainWindow::~MainWindow()
