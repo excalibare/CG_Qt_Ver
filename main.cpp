@@ -23,56 +23,56 @@
 //#include <QPen>
 using namespace std;
 
-//TODO:ç»˜åˆ¶å¼§çº¿çš„ èµ·å§‹è§’ å¤§äº ç»“æŸè§’ åŠŸèƒ½æœªå®Œå–„
+//TODO:»æÖÆ»¡ÏßµÄ ÆğÊ¼½Ç ´óÓÚ ½áÊø½Ç ¹¦ÄÜÎ´ÍêÉÆ
 
 class ShapeDrawer : public QWidget {
     // Q_OBJECT;
 private:
-    // å…¨å±€
-    DrawMode mode;              // å½“å‰ç»˜åˆ¶æ¨¡å¼ï¼šç›´çº¿ æˆ– åœ†å¼§
+    // È«¾Ö
+    DrawMode mode;              // µ±Ç°»æÖÆÄ£Ê½£ºÖ±Ïß »ò Ô²»¡
     vector<vector<pointData>> MAP;
-    int lineWidth = 5;          // å­˜å‚¨çº¿æ¡å®½åº¦
-    bool hasStartPoint = false; // æ˜¯å¦æœ‰èµ·ç‚¹
-    bool drawing = false;       // æ˜¯å¦æ­£åœ¨ç»˜åˆ¶ï¼ˆç”¨æ¥æ§åˆ¶é¼ æ ‡é‡Šæ”¾æ—¶çš„åŠ¨ä½œï¼‰
-    QColor currentLineColor = Qt::black;    // å½“å‰çº¿æ¡é¢œè‰²
-    QVector<int> shape;          // æ§åˆ¶å›¾å½¢çš„é‡ç»˜é¡ºåºï¼Œé˜²æ­¢é¡ºåºé”™ä¹± 1.ç›´çº¿ 2.åœ†å¼§æˆ–åœ† 3.å¤šè¾¹å½¢ 4.ç§å­ç‚¹ 5.Bezier 6.Bspline
+    int lineWidth = 5;          // ´æ´¢ÏßÌõ¿í¶È
+    bool hasStartPoint = false; // ÊÇ·ñÓĞÆğµã
+    bool drawing = false;       // ÊÇ·ñÕıÔÚ»æÖÆ£¨ÓÃÀ´¿ØÖÆÊó±êÊÍ·ÅÊ±µÄ¶¯×÷£©
+    QColor currentLineColor = Qt::black;    // µ±Ç°ÏßÌõÑÕÉ«
+    QVector<int> shape;          // ¿ØÖÆÍ¼ĞÎµÄÖØ»æË³Ğò£¬·ÀÖ¹Ë³Ğò´íÂÒ 1.Ö±Ïß 2.Ô²»¡»òÔ² 3.¶à±ßĞÎ 4.ÖÖ×Óµã 5.Bezier 6.Bspline
     float XL = 0, XR = 800, YB = 0, YT = 550;
-    Point _begin = Point(0, 0); // æ‹–æ‹½çš„å‚è€ƒåæ ‡ï¼Œæ–¹ä¾¿è®¡ç®—ä½ç§»
-    bool ctr_or_not = false;	// Bezierä¸Bsplineæ˜¯å¦ç§»åŠ¨æ§åˆ¶ç‚¹
-    QLabel* coordLabel;			// é¼ æ ‡æŒ‰ä¸‹æ—¶æ˜¾ç¤ºå®æ—¶ä½ç½®çš„ç»„ä»¶
+    Point _begin = Point(0, 0); // ÍÏ×§µÄ²Î¿¼×ø±ê£¬·½±ã¼ÆËãÎ»ÒÆ
+    bool ctr_or_not = false;	// BezierÓëBsplineÊÇ·ñÒÆ¶¯¿ØÖÆµã
+    QLabel* coordLabel;			// Êó±ê°´ÏÂÊ±ÏÔÊ¾ÊµÊ±Î»ÖÃµÄ×é¼ş
 
-    // ç›´çº¿æ®µ
-    QPoint startPoint;          // çº¿æ®µçš„èµ·ç‚¹
-    QPoint endPoint;            // çº¿æ®µçš„ç»ˆç‚¹
-    line_Algorithm line_algo = Midpoint;  // å½“å‰é€‰æ‹©çš„ç›´çº¿æ®µç®—æ³•
-    QVector<Line> lines;        // å­˜å‚¨å·²ç»˜åˆ¶çš„ç›´çº¿æ®µ
+    // Ö±Ïß¶Î
+    QPoint startPoint;          // Ïß¶ÎµÄÆğµã
+    QPoint endPoint;            // Ïß¶ÎµÄÖÕµã
+    line_Algorithm line_algo = Midpoint;  // µ±Ç°Ñ¡ÔñµÄÖ±Ïß¶ÎËã·¨
+    QVector<Line> lines;        // ´æ´¢ÒÑ»æÖÆµÄÖ±Ïß¶Î
 
-    // åœ†ã€åœ†å¼§
-    QPoint center;              // åœ†å¿ƒï¼ˆå¯¹äºåœ†å¼§ï¼‰
-    int radius;                 // åŠå¾„ï¼ˆå¯¹äºåœ†å¼§ï¼‰
-    int startAngle, endAngle;   // åœ†å¼§çš„èµ·å§‹å’Œç»ˆæ­¢è§’åº¦
-    int counter = 0;            // è®¡æ•°ï¼ˆç‚¹å‡»é¼ æ ‡æ¬¡æ•°ï¼Œ0-2å¾ªç¯ï¼‰
-    QVector<Arc> arcs;          // å­˜å‚¨å·²ç»˜åˆ¶çš„ç›´çº¿æ®µ
+    // Ô²¡¢Ô²»¡
+    QPoint center;              // Ô²ĞÄ£¨¶ÔÓÚÔ²»¡£©
+    int radius;                 // °ë¾¶£¨¶ÔÓÚÔ²»¡£©
+    int startAngle, endAngle;   // Ô²»¡µÄÆğÊ¼ºÍÖÕÖ¹½Ç¶È
+    int counter = 0;            // ¼ÆÊı£¨µã»÷Êó±ê´ÎÊı£¬0-2Ñ­»·£©
+    QVector<Arc> arcs;          // ´æ´¢ÒÑ»æÖÆµÄÖ±Ïß¶Î
 
-    // å¤šè¾¹å½¢
-    QVector<Polygon> polygons; // å­˜å‚¨å¤šä¸ªå¤šè¾¹å½¢
-    Polygon currentPolygon; // å½“å‰æ­£åœ¨ç»˜åˆ¶çš„å¤šè¾¹å½¢
-    vector<Fill> fills; // å­˜å‚¨å¤šä¸ªå¤šè¾¹å½¢
+    // ¶à±ßĞÎ
+    QVector<Polygon> polygons; // ´æ´¢¶à¸ö¶à±ßĞÎ
+    Polygon currentPolygon; // µ±Ç°ÕıÔÚ»æÖÆµÄ¶à±ßĞÎ
+    vector<Fill> fills; // ´æ´¢¶à¸ö¶à±ßĞÎ
     QStack<Point> stack;
     Polygon* nowPolygon;
 
-    // è£å‰ª
-    QPoint clipStartPoint;  // è£å‰ªçª—å£çš„èµ·ç‚¹
-    QPoint clipEndPoint;    // è£å‰ªçª—å£çš„ç»ˆç‚¹
-    clip_Algorithm  clip_algo = SutherlandTrim;// å½“å‰é€‰æ‹©çš„ç›´çº¿æ®µè£å‰ªç®—æ³•
+    // ²Ã¼ô
+    QPoint clipStartPoint;  // ²Ã¼ô´°¿ÚµÄÆğµã
+    QPoint clipEndPoint;    // ²Ã¼ô´°¿ÚµÄÖÕµã
+    clip_Algorithm  clip_algo = SutherlandTrim;// µ±Ç°Ñ¡ÔñµÄÖ±Ïß¶Î²Ã¼ôËã·¨
     transMode trans_algo = MOVE;
-    QVector<QPoint> _cropPolygon; // è£åˆ‡å¤šè¾¹å½¢
+    QVector<QPoint> _cropPolygon; // ²ÃÇĞ¶à±ßĞÎ
 
-    // å¡«å……
+    // Ìî³ä
     Fill nowFill;
 
-    // å˜å½¢
-    bool isInTagRect = false; //æ˜¯å¦åœ¨æ ‡å¿—çŸ©å½¢å†…
+    // ±äĞÎ
+    bool isInTagRect = false; //ÊÇ·ñÔÚ±êÖ¾¾ØĞÎÄÚ
     bool isInPolygon = false;
     bool isInEllipse = false;
     bool isArrow = false;
@@ -80,42 +80,42 @@ private:
     bool isInFill = false;
 
     bool iscomfirm = false;
-    bool isSpecificRefer = false; // æ˜¯å¦æœ‰æŒ‡å®šçš„å˜æ¢ç‚¹
+    bool isSpecificRefer = false; // ÊÇ·ñÓĞÖ¸¶¨µÄ±ä»»µã
     Polygon tempTransPoly;
     Point referancePoint;
-    QRect* transRectTag = new QRect(100, 100, 20, 20);             //æ ‡ç­¾çŸ©å½¢
+    QRect* transRectTag = new QRect(100, 100, 20, 20);             //±êÇ©¾ØĞÎ
 
-    // Bezieræ›²çº¿
-    QVector<QVector<QPoint>> all_beziers;	// æ‰€æœ‰çš„Bezieræ›²çº¿
-    QVector<QPoint> currentBezierControlPoints;	// æš‚å­˜çš„å½“å‰Bezieræ›²çº¿æ§åˆ¶ç‚¹
-    int isOnPoint1 = -1;	// ç”¨äºè·Ÿè¸ªå½“å‰é€‰ä¸­çš„æ§åˆ¶ç‚¹
+    // BezierÇúÏß
+    QVector<QVector<QPoint>> all_beziers;	// ËùÓĞµÄBezierÇúÏß
+    QVector<QPoint> currentBezierControlPoints;	// Ôİ´æµÄµ±Ç°BezierÇúÏß¿ØÖÆµã
+    int isOnPoint1 = -1;	// ÓÃÓÚ¸ú×Ùµ±Ç°Ñ¡ÖĞµÄ¿ØÖÆµã
     int SelectedBezier = -1, SelectedPoint = -1;
 
-    // Bsplineæ›²çº¿
-    QVector<QVector<QPoint>> all_bsplines;	// æ‰€æœ‰çš„Bsplineæ›²çº¿
-    QVector<QPoint> currentBsplineControlPoints;	// å½“å‰Bsplineæ›²çº¿çš„æ§åˆ¶ç‚¹å®¹å™¨
-    int last_k = 3;			// å½“å‰Bsplineæ›²çº¿çš„é˜¶æ•°
-    vector<int> k_steps;	// æ¯æ¡Bsplineæ›²çº¿çš„é˜¶æ•°
-    int isOnPoint2 = -1;	// ç”¨äºè·Ÿè¸ªå½“å‰é€‰ä¸­çš„æ§åˆ¶ç‚¹
+    // BsplineÇúÏß
+    QVector<QVector<QPoint>> all_bsplines;	// ËùÓĞµÄBsplineÇúÏß
+    QVector<QPoint> currentBsplineControlPoints;	// µ±Ç°BsplineÇúÏßµÄ¿ØÖÆµãÈİÆ÷
+    int last_k = 3;			// µ±Ç°BsplineÇúÏßµÄ½×Êı
+    vector<int> k_steps;	// Ã¿ÌõBsplineÇúÏßµÄ½×Êı
+    int isOnPoint2 = -1;	// ÓÃÓÚ¸ú×Ùµ±Ç°Ñ¡ÖĞµÄ¿ØÖÆµã
     int SelectedBspline = -1;
 
 protected:
-    // é‡å†™ç»˜åˆ¶äº‹ä»¶
+    // ÖØĞ´»æÖÆÊÂ¼ş
     void paintEvent(QPaintEvent* event) override
     {
-        // å„ç±»å›¾å½¢çš„è®¡æ•°å™¨ï¼Œæ§åˆ¶ä»vectorä¸­å–å‡ºçš„é¡ºåº
+        // ¸÷ÀàÍ¼ĞÎµÄ¼ÆÊıÆ÷£¬¿ØÖÆ´ÓvectorÖĞÈ¡³öµÄË³Ğò
         int i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0;
         clearMAP(MAP);
         QPainter painter(this);
 
-        // æ¯æ¬¡åˆ·æ–°çš„æ—¶å€™é‡æ–°ç»˜åˆ¶å·²å­˜åœ¨ç›´çº¿
+        // Ã¿´ÎË¢ĞÂµÄÊ±ºòÖØĞÂ»æÖÆÒÑ´æÔÚÖ±Ïß
         for (int c = 0; c < shape.size(); c++) {
             QPen pen;
-            // é‡ç»˜ç›´çº¿
+            // ÖØ»æÖ±Ïß
             if (shape.at(c) == 1 && lines.size() > i1) {
                 const Line& line = lines.at(i1++);
-                pen.setColor(line.colour);  // è®¾ç½®çº¿æ¡é¢œè‰²(é»˜è®¤ black)
-                pen.setWidth(line.width);   // ä½¿ç”¨ width è®¾ç½®çº¿æ¡ç²—ç»†
+                pen.setColor(line.colour);  // ÉèÖÃÏßÌõÑÕÉ«(Ä¬ÈÏ black)
+                pen.setWidth(line.width);   // Ê¹ÓÃ width ÉèÖÃÏßÌõ´ÖÏ¸
                 painter.setPen(pen);
                 switch (line.alg) {
                 case DDA:
@@ -132,11 +132,11 @@ protected:
                     break;
                 }
             }
-            // é‡ç»˜åœ†å¼§ æˆ– åœ†
+            // ÖØ»æÔ²»¡ »ò Ô²
             else if (shape.at(c) == 2 && arcs.size() > i2) {
                 const Arc& arc = arcs.at(i2++);
-                pen.setColor(arc.colour);   // è®¾ç½®çº¿æ¡é¢œè‰²(é»˜è®¤ black)
-                pen.setWidth(arc.width);    // ä½¿ç”¨ width è®¾ç½®çº¿æ¡ç²—ç»†
+                pen.setColor(arc.colour);   // ÉèÖÃÏßÌõÑÕÉ«(Ä¬ÈÏ black)
+                pen.setWidth(arc.width);    // Ê¹ÓÃ width ÉèÖÃÏßÌõ´ÖÏ¸
                 painter.setPen(pen);
                 if (arc.startAngle <= arc.endAngle) {
                     drawMidpointArc(painter, arc.center, arc.radius, arc.startAngle, arc.endAngle);
@@ -146,12 +146,12 @@ protected:
                     drawMidpointArc(painter, arc.center, arc.radius, 0, arc.endAngle);
                 }
             }
-            // é‡ç»˜å¤šè¾¹å½¢
+            // ÖØ»æ¶à±ßĞÎ
             else if (shape.at(c) == 3 && polygons.size() > i3) {
                 const Polygon& polygon = polygons.at(i3++);
                 QPen pen;
-                pen.setColor(polygon.color);  // è®¾ç½®çº¿æ¡é¢œè‰²(é»˜è®¤ black)
-                // pen.setWidth(lineWidth);		 // ä½¿ç”¨ width è®¾ç½®çº¿æ¡ç²—ç»†
+                pen.setColor(polygon.color);  // ÉèÖÃÏßÌõÑÕÉ«(Ä¬ÈÏ black)
+                // pen.setWidth(lineWidth);		 // Ê¹ÓÃ width ÉèÖÃÏßÌõ´ÖÏ¸
                 painter.setPen(pen);
                 if (polygon.points.size() > 1) {
                     for (size_t i = 0; i < polygon.points.size() - 1; ++i) {
@@ -162,50 +162,50 @@ protected:
                     scanlineFill(painter, polygon);
                 }
             }
-            // é‡ç»˜å¡«å……åŒºåŸŸ
+            // ÖØ»æÌî³äÇøÓò
             else if (shape.at(c) == 4 && fills.size() > i4) {
                 const Fill& fill = fills.at(i4++);
                 QPen pen;
-                pen.setColor(fill.color);  // è®¾ç½®çº¿æ¡é¢œè‰²(é»˜è®¤ black)
+                pen.setColor(fill.color);  // ÉèÖÃÏßÌõÑÕÉ«(Ä¬ÈÏ black)
                 painter.setPen(pen);
                 qDebug() << "In paintevent : " << fill.color << " " << Fill(fill).point.Getx() << " " << Fill(fill).point.Gety();
                 fillShape(painter, fill.point, fill.color);
             }
-            // é‡ç»˜Bezieræ›²çº¿
+            // ÖØ»æBezierÇúÏß
             else if (shape.at(c) == 5 && all_beziers.size() > i5) {
                 painter.setPen(Qt::blue);
                 const QVector<QPoint>& ControlPoints = all_beziers.at(i5++);
-                // ç»˜åˆ¶Beizeræ§åˆ¶ç‚¹
+                // »æÖÆBeizer¿ØÖÆµã
                 if (ctr_or_not) {
                     for (const QPoint& point : ControlPoints) {
                         painter.drawEllipse(point, 5, 5);
                     }
                 }
-                // ç»˜åˆ¶Bezieræ›²çº¿
+                // »æÖÆBezierÇúÏß
                 if (ControlPoints.size() > 1) {
                     QPen bezierPen(currentLineColor, lineWidth);
                     Bezier bezier(1, painter, ControlPoints.toVector(), bezierPen);
                     bezier.drawBezier();
                 }
             }
-            // é‡ç»˜Bsplineæ›²çº¿
+            // ÖØ»æBsplineÇúÏß
             else if (shape.at(c) == 6 && all_bsplines.size() > i6) {
                 int temp_k = k_steps[i6];
                 painter.setPen(Qt::blue);
                 const QVector<QPoint>& ControlPoints = all_bsplines.at(i6++);
-                // ç»˜åˆ¶Bsplineæ§åˆ¶ç‚¹
+                // »æÖÆBspline¿ØÖÆµã
                 if (ctr_or_not) {
                     for (const QPoint& point : ControlPoints) {
                         painter.drawEllipse(point, 5, 5);
                     }
                     for (int j = 0; j < ControlPoints.size() - 1; ++j) {
-                        // è®¾ç½®è™šçº¿æ ·å¼
+                        // ÉèÖÃĞéÏßÑùÊ½
                         QPen dashedPen(Qt::blue, 1);
                         painter.setPen(dashedPen);
                         drawPreviewDash(painter, ControlPoints.at(j), ControlPoints.at(j + 1));
                     }
                 }
-                // ç»˜åˆ¶Bsplineæ›²çº¿
+                // »æÖÆBsplineÇúÏß
                 if (ControlPoints.size() > 1) {
                     QPen bsplinePen(currentLineColor, lineWidth);
                     Bspline bspline(painter, ControlPoints.toVector(), temp_k, bsplinePen);
@@ -214,14 +214,14 @@ protected:
             }
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„Bezieræ›²çº¿
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄBezierÇúÏß
         if (mode == BezierMode && currentBezierControlPoints.size() > 1) {
             QPen bezierPen(currentLineColor, lineWidth);
             Bezier bezier(1, painter, currentBezierControlPoints.toVector(), bezierPen);
             bezier.drawBezier();
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„Beizeræ§åˆ¶ç‚¹
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄBeizer¿ØÖÆµã
         if (mode == BezierMode) {
             painter.setPen(Qt::blue);
             for (const QPoint& point : currentBezierControlPoints) {
@@ -229,7 +229,7 @@ protected:
             }
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„Bsplineæ›²çº¿
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄBsplineÇúÏß
         if (mode == BsplineMode && currentBsplineControlPoints.size() > 1) {
             QPen bsplinePen(currentLineColor, lineWidth);
 
@@ -237,7 +237,7 @@ protected:
             bspline.drawBspline();
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„Bsplineæ§åˆ¶ç‚¹
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄBspline¿ØÖÆµã
         if (mode == BsplineMode) {
             painter.setPen(Qt::blue);
             for (const QPoint& point : currentBsplineControlPoints) {
@@ -245,26 +245,26 @@ protected:
             }
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„å¤šè¾¹å½¢
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄ¶à±ßĞÎ
         if (currentPolygon.points.size() > 1) {
             for (size_t i = 0; i < currentPolygon.points.size() - 1; ++i) {
                 painter.drawLine(currentPolygon.points[i].x, currentPolygon.points[i].y, currentPolygon.points[i + 1].x, currentPolygon.points[i + 1].y);
             }
         }
 
-        // ç»˜åˆ¶å½“å‰æ­£åœ¨åˆ›å»ºçš„å¤šè¾¹å½¢è£å‰ªçª—å£
+        // »æÖÆµ±Ç°ÕıÔÚ´´½¨µÄ¶à±ßĞÎ²Ã¼ô´°¿Ú
         if (_cropPolygon.size() > 1) {
             for (size_t i = 0; i < _cropPolygon.size() - 1; ++i) {
                 painter.drawLine(_cropPolygon[i].x(), _cropPolygon[i].y(), _cropPolygon[i + 1].x(), _cropPolygon[i + 1].y());
             }
         }
 
-        // å¦‚æœæœ‰èµ·ç‚¹ï¼Œç»˜åˆ¶çº¿æ®µçš„é¢„è§ˆ
+        // Èç¹ûÓĞÆğµã£¬»æÖÆÏß¶ÎµÄÔ¤ÀÀ
         if (hasStartPoint) {
             QPen pen;
-            QColor temp_color = Qt::gray;   // è®¾ç½®é¢„è§ˆçº¿æ¡é¢œè‰²(ç°è‰²ï¼‰
+            QColor temp_color = Qt::gray;   // ÉèÖÃÔ¤ÀÀÏßÌõÑÕÉ«(»ÒÉ«£©
             pen.setColor(temp_color);
-            pen.setWidth(lineWidth);        // ä½¿ç”¨å½“å‰è®¾ç½®çš„çº¿æ¡å®½åº¦
+            pen.setWidth(lineWidth);        // Ê¹ÓÃµ±Ç°ÉèÖÃµÄÏßÌõ¿í¶È
             painter.setPen(pen);
 
             if (mode == LineMode) {
@@ -285,15 +285,15 @@ protected:
                 }
             }
             else if (mode == TrimMode && clip_algo != CropPolygon) {
-                // æ›´æ–°é¢„è§ˆç”¨ç”»ç¬”
+                // ¸üĞÂÔ¤ÀÀÓÃ»­±Ê
                 pen.setWidth(2);
                 painter.setPen(pen);
-                // è·å–é¢„è§ˆè£å‰ªçŸ©å½¢æ¡†çš„å››ä¸ªé¡¶ç‚¹
+                // »ñÈ¡Ô¤ÀÀ²Ã¼ô¾ØĞÎ¿òµÄËÄ¸ö¶¥µã
                 QPoint top_left(min(clipStartPoint.x(), clipEndPoint.x()), max(clipStartPoint.y(), clipEndPoint.y()));
                 QPoint top_right(max(clipStartPoint.x(), clipEndPoint.x()), max(clipStartPoint.y(), clipEndPoint.y()));
                 QPoint bottom_left(min(clipStartPoint.x(), clipEndPoint.x()), min(clipStartPoint.y(), clipEndPoint.y()));
                 QPoint bottom_right(max(clipStartPoint.x(), clipEndPoint.x()), min(clipStartPoint.y(), clipEndPoint.y()));
-                // ç»˜åˆ¶é¢„è§ˆçŸ©å½¢æ¡†
+                // »æÖÆÔ¤ÀÀ¾ØĞÎ¿ò
                 drawPreviewDash(painter, top_left, top_right);
                 drawPreviewDash(painter, top_right, bottom_right);
                 drawPreviewDash(painter, bottom_right, bottom_left);
@@ -301,11 +301,11 @@ protected:
             }
         }
 
-        // å¦‚æœæœ‰èµ·ç‚¹å’Œç»ˆç‚¹ï¼Œç»˜åˆ¶å®é™…çº¿æ®µ
+        // Èç¹ûÓĞÆğµãºÍÖÕµã£¬»æÖÆÊµ¼ÊÏß¶Î
         if (drawing) {
             QPen pen;
-            pen.setColor(currentLineColor); // ä½¿ç”¨å½“å‰è®¾ç½®çš„é¢œè‰²
-            pen.setWidth(lineWidth);        // ä½¿ç”¨å½“å‰è®¾ç½®çš„çº¿æ¡å®½åº¦
+            pen.setColor(currentLineColor); // Ê¹ÓÃµ±Ç°ÉèÖÃµÄÑÕÉ«
+            pen.setWidth(lineWidth);        // Ê¹ÓÃµ±Ç°ÉèÖÃµÄÏßÌõ¿í¶È
             painter.setPen(pen);
 
             if (mode == LineMode) {
@@ -338,12 +338,12 @@ protected:
         }
     }
 
-    // åˆ¤å®šç»˜åˆ¶çš„æ—¶å€™æ˜¯å¦å‡ºç•Œï¼ˆé’ˆå¯¹MAPï¼‰
-    // å†™fillçš„lycï¼šè°¢è°¢ä½ æä¾›äº†è¿™ä¸ªä¸œè¥¿
-    // lycï¼šä¸æ˜¯ï¼Œå¦‚æœwidthå’Œheightæ²¡æœ‰é»˜è®¤å‚æ•°æˆ‘ä¸ºä»€ä¹ˆä¸è‡ªå·±å†™åˆ¤æ–­
-    // lty: é‚£ä½ è‡ªå·±è®¾ç½®ä¸ªé»˜è®¤å‚æ•°å˜›ï¼Œå°±è‡ªå·±åŠ¨æ‰‹ä¸°è¡£è¶³é£Ÿï¼Œæ‡‚å§
-    // lycï¼šä¸æ˜¯ä½ çœŸå›æˆ‘æ¶ˆæ¯äº†
-    // lycï¼šé‚£æˆ‘æ”¹äº†
+    // ÅĞ¶¨»æÖÆµÄÊ±ºòÊÇ·ñ³ö½ç£¨Õë¶ÔMAP£©
+    // Ğ´fillµÄlyc£ºĞ»Ğ»ÄãÌá¹©ÁËÕâ¸ö¶«Î÷
+    // lyc£º²»ÊÇ£¬Èç¹ûwidthºÍheightÃ»ÓĞÄ¬ÈÏ²ÎÊıÎÒÎªÊ²Ã´²»×Ô¼ºĞ´ÅĞ¶Ï
+    // lty: ÄÇÄã×Ô¼ºÉèÖÃ¸öÄ¬ÈÏ²ÎÊıÂï£¬¾Í×Ô¼º¶¯ÊÖ·áÒÂ×ãÊ³£¬¶®°É
+    // lyc£º²»ÊÇÄãÕæ»ØÎÒÏûÏ¢ÁË
+    // lyc£ºÄÇÎÒ¸ÄÁË
     bool checkLegalPos(int x, int y, int width = 800, int height = 550) {
         if (x >= 0 && x <= width && y >= 0 && y <= height) {
             return true;
@@ -352,9 +352,9 @@ protected:
             return false;
     }
 
-    // ç»˜åˆ¶åƒç´ ç‚¹ä¸ MAP å¯¹åº”çš„åƒç´ æ•°æ®
+    // »æÖÆÏñËØµãÓë MAP ¶ÔÓ¦µÄÏñËØÊı¾İ
     void drawPixel(int x, int y, QPainter& painter) {
-        //ä¸ä½¿ç”¨ç¬”åˆ·
+        //²»Ê¹ÓÃ±ÊË¢
         if (checkLegalPos(x, y, 800, 550)) {
             painter.drawPoint(x, y);
             // qDebug() << x << " " << y;
@@ -362,7 +362,7 @@ protected:
         }
     };
 
-    // DDA ç®—æ³•å®ç°
+    // DDA Ëã·¨ÊµÏÖ
     void drawDDALine(QPainter& painter, QPoint p1, QPoint p2) {
         int dx = p2.x() - p1.x();
         int dy = p2.y() - p1.y();
@@ -379,7 +379,7 @@ protected:
         }
     }
 
-    // Bresenham ç®—æ³•å®ç°
+    // Bresenham Ëã·¨ÊµÏÖ
     void drawBresenhamLine(QPainter& painter, QPoint p1, QPoint p2) {
         int x1 = p1.x();
         int y1 = p1.y();
@@ -405,27 +405,27 @@ protected:
         }
     }
 
-    // ä¸­ç‚¹ç®—æ³•å®ç°
+    // ÖĞµãËã·¨ÊµÏÖ
     void drawMidpointLine(QPainter& painter, QPoint p1, QPoint p2) {
-        // æå–ä¿¡æ¯
+        // ÌáÈ¡ĞÅÏ¢
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
         int y2 = p2.y();
 
-        int x = x1, y = y1;	//èµ‹åˆå§‹ç‚¹
+        int x = x1, y = y1;	//¸³³õÊ¼µã
         int dy = y1 - y2, dx = x2 - x1;
-        int delta_x = (dx >= 0 ? 1 : (dx = -dx, -1));	//è‹¥dx>0åˆ™æ­¥é•¿ä¸º1ï¼Œå¦åˆ™ä¸º-1ï¼ŒåŒæ—¶dxå˜æ­£
-        int delta_y = (dy <= 0 ? 1 : (dy = -dy, -1));	//æ³¨æ„è¿™é‡Œdy<0,æ‰æ˜¯ç”»å¸ƒä¸­yçš„å¢é•¿æ–¹å‘
+        int delta_x = (dx >= 0 ? 1 : (dx = -dx, -1));	//Èôdx>0Ôò²½³¤Îª1£¬·ñÔòÎª-1£¬Í¬Ê±dx±äÕı
+        int delta_y = (dy <= 0 ? 1 : (dy = -dy, -1));	//×¢ÒâÕâÀïdy<0,²ÅÊÇ»­²¼ÖĞyµÄÔö³¤·½Ïò
 
-        drawPixel(x, y, painter);		//ç”»èµ·å§‹ç‚¹
+        drawPixel(x, y, painter);		//»­ÆğÊ¼µã
 
         int d, incrE, incrNE;
-        if (-dy <= dx)		// æ–œç‡ç»å¯¹å€¼ <= 1
-        //è¿™é‡Œ-dyå³ç”»å¸ƒä¸­çš„dy
+        if (-dy <= dx)		// Ğ±ÂÊ¾ø¶ÔÖµ <= 1
+        //ÕâÀï-dy¼´»­²¼ÖĞµÄdy
         {
-            d = 2 * dy + dx;	//åˆå§‹åŒ–åˆ¤æ–­å¼d
-            incrE = 2 * dy;		//å–åƒç´ Eæ—¶åˆ¤åˆ«å¼å¢é‡
+            d = 2 * dy + dx;	//³õÊ¼»¯ÅĞ¶ÏÊ½d
+            incrE = 2 * dy;		//È¡ÏñËØEÊ±ÅĞ±ğÊ½ÔöÁ¿
             incrNE = 2 * (dy + dx);//NE
             while (x != x2)
             {
@@ -437,15 +437,15 @@ protected:
                 drawPixel(x, y, painter);
             }
         }
-        else				// æ–œç‡ç»å¯¹å€¼ > 1
-        // xå’Œyæƒ…å†µäº’æ¢
+        else				// Ğ±ÂÊ¾ø¶ÔÖµ > 1
+        // xºÍyÇé¿ö»¥»»
         {
             d = 2 * dx + dy;
             incrE = 2 * dx;
             incrNE = 2 * (dy + dx);
             while (y != y2)
             {
-                if (d < 0)	//æ³¨æ„då˜åŒ–æƒ…å†µ
+                if (d < 0)	//×¢Òâd±ä»¯Çé¿ö
                     d += incrE;
                 else
                     x += delta_x, d += incrNE;
@@ -455,7 +455,7 @@ protected:
         }
     }
 
-    // è™šçº¿ç»˜åˆ¶ Bresenham ç®—æ³•å®ç°
+    // ĞéÏß»æÖÆ Bresenham Ëã·¨ÊµÏÖ
     void drawDashLine(QPainter& painter, QPoint p1, QPoint p2)
     {
         int x1 = p1.x();
@@ -468,13 +468,13 @@ protected:
         int sy = (y1 < y2) ? 1 : -1;
         int err = dx - dy;
 
-        int dashLength = 8;   // æ¯æ®µè™šçº¿çš„é•¿åº¦
-        int gapLength = 8;    // æ¯æ®µç©ºç™½çš„é•¿åº¦
-        int totalLength = dashLength + gapLength;  // æ€»å‘¨æœŸé•¿åº¦
-        int stepCount = 0;    // è®¡æ•°æ­¥æ•°ï¼Œç”¨äºå†³å®šæ˜¯å¦ç»˜åˆ¶
+        int dashLength = 8;   // Ã¿¶ÎĞéÏßµÄ³¤¶È
+        int gapLength = 8;    // Ã¿¶Î¿Õ°×µÄ³¤¶È
+        int totalLength = dashLength + gapLength;  // ×ÜÖÜÆÚ³¤¶È
+        int stepCount = 0;    // ¼ÆÊı²½Êı£¬ÓÃÓÚ¾ö¶¨ÊÇ·ñ»æÖÆ
 
         while (x1 != x2 || y1 != y2) {
-            // åªåœ¨è™šçº¿çš„éƒ¨åˆ†ç»˜åˆ¶ç‚¹
+            // Ö»ÔÚĞéÏßµÄ²¿·Ö»æÖÆµã
             if (stepCount % totalLength < dashLength) {
                 drawPixel(x1, y1, painter);
             }
@@ -489,13 +489,13 @@ protected:
                 y1 += sy;
             }
 
-            stepCount++;  // å¢åŠ æ­¥æ•°è®¡æ•°å™¨
+            stepCount++;  // Ôö¼Ó²½Êı¼ÆÊıÆ÷
         }
     }
 
-    // ä¸­ç‚¹åœ†å¼§ç®—æ³•å®ç°
+    // ÖĞµãÔ²»¡Ëã·¨ÊµÏÖ
     void drawMidpointArc(QPainter& painter, QPoint center, int radius, int startAngle, int endAngle) {
-        // å°†è§’åº¦è½¬æ¢ä¸ºå¼§åº¦
+        // ½«½Ç¶È×ª»»Îª»¡¶È
         float startRad = startAngle * M_PI / 180.0;
         float endRad = endAngle * M_PI / 180.0;
 
@@ -518,7 +518,7 @@ protected:
         }
     }
 
-    // ç»˜åˆ¶å¯¹ç§°ç‚¹ï¼Œåªç»˜åˆ¶åœ¨è§’åº¦èŒƒå›´å†…çš„ç‚¹
+    // »æÖÆ¶Ô³Æµã£¬Ö»»æÖÆÔÚ½Ç¶È·¶Î§ÄÚµÄµã
     void drawSymmetricPointsArc(QPainter& painter, QPoint center, int x, int y, float startRad, float endRad) {
         drawPointInArc(painter, center, x, y, startRad, endRad);
         drawPointInArc(painter, center, -x, y, startRad, endRad);
@@ -530,7 +530,7 @@ protected:
         drawPointInArc(painter, center, -y, -x, startRad, endRad);
     }
 
-    // åˆ¤æ–­ç‚¹æ˜¯å¦åœ¨åœ†å¼§è§’åº¦èŒƒå›´å†…å¹¶ç»˜åˆ¶
+    // ÅĞ¶ÏµãÊÇ·ñÔÚÔ²»¡½Ç¶È·¶Î§ÄÚ²¢»æÖÆ
     void drawPointInArc(QPainter& painter, QPoint center, int x, int y, float startRad, float endRad) {
         float angle = atan2(y, x);
         if (angle < 0) angle += 2 * M_PI;
@@ -539,22 +539,22 @@ protected:
         }
     }
 
-    // æ‰«æçº¿ç®—æ³•
+    // É¨ÃèÏßËã·¨
     void scanlineFill(QPainter& painter, const Polygon& polygon) {
         if (polygon.points.size() < 3) return;
 
-        // è®¡ç®—æœ€å°å’Œæœ€å¤§ y åæ ‡
+        // ¼ÆËã×îĞ¡ºÍ×î´ó y ×ø±ê
         int ymin = polygon.points[0].y, ymax = polygon.points[0].y;
         for (const Point& p : polygon.points) {
             ymin = min(ymin, p.y);
             ymax = max(ymax, p.y);
         }
 
-        // å¯¹æ¯æ¡æ‰«æçº¿ä» ymin åˆ° ymax è¿›è¡Œå¤„ç†
+        // ¶ÔÃ¿ÌõÉ¨ÃèÏß´Ó ymin µ½ ymax ½øĞĞ´¦Àí
         for (int y = ymin; y <= ymax; ++y) {
             vector<int> intersections;
 
-            // è®¡ç®—æ¯æ¡è¾¹ä¸å½“å‰æ‰«æçº¿çš„äº¤ç‚¹
+            // ¼ÆËãÃ¿Ìõ±ßÓëµ±Ç°É¨ÃèÏßµÄ½»µã
             for (size_t i = 0; i < polygon.points.size() - 1; ++i) {
                 const Point& p1 = polygon.points[i];
                 const Point& p2 = polygon.points[i + 1];
@@ -565,19 +565,19 @@ protected:
                 }
             }
 
-            // å¯¹äº¤ç‚¹è¿›è¡Œæ’åº
+            // ¶Ô½»µã½øĞĞÅÅĞò
             sort(intersections.begin(), intersections.end());
 
-            // ç”»å‡ºäº¤ç‚¹ä¹‹é—´çš„çº¿æ®µ(é¢„è§ˆç‰ˆï¼Œæ•…ä½¿ç”¨Qtçš„å‡½æ•°)
+            // »­³ö½»µãÖ®¼äµÄÏß¶Î(Ô¤ÀÀ°æ£¬¹ÊÊ¹ÓÃQtµÄº¯Êı)
             for (size_t i = 0; i < intersections.size(); i += 2) {
                 painter.drawLine(intersections[i], y, intersections[i + 1], y);
             }
         }
     }
 
-    // ç§å­ç‚¹å¡«å……ç®—æ³•
+    // ÖÖ×ÓµãÌî³äËã·¨
     void fillShape(QPainter& painter, Point point, QColor newColor) {
-        //å°†ç‚¹å‡»ä½ç½®çš„é¢œè‰²è®¾ç½®ä¸ºéœ€è¦æ›¿æ¢çš„é¢œè‰²
+        //½«µã»÷Î»ÖÃµÄÑÕÉ«ÉèÖÃÎªĞèÒªÌæ»»µÄÑÕÉ«
         QColor oldColor = MAP[point.Getx()][point.Gety()].getColor();
         if (oldColor == newColor)
             return;
@@ -638,7 +638,7 @@ protected:
         }
     }
 
-    // Sutherland ç‚¹ç¼–ç 
+    // Sutherland µã±àÂë
     OutCode computeOutCode(double x, double y, double xmin, double ymin, double xmax, double ymax) {
         OutCode code = INSIDE;
 
@@ -650,7 +650,7 @@ protected:
         return code;
     }
 
-    // Sutherland è£å‰ªç›´çº¿æ®µç®—æ³•
+    // Sutherland ²Ã¼ôÖ±Ïß¶ÎËã·¨
     bool cohenSutherlandClip(QLineF& line, double xmin, double ymin, double xmax, double ymax) {
         double x0 = line.x1(), y0 = line.y1();
         double x1 = line.x2(), y1 = line.y2();
@@ -711,7 +711,7 @@ protected:
         return accept;
     }
 
-    // ä¸­ç‚¹ç®—æ³•è£å‰ªç›´çº¿æ®µ
+    // ÖĞµãËã·¨²Ã¼ôÖ±Ïß¶Î
     bool liangBarskyClip(QLineF& line, double xmin, double ymin, double xmax, double ymax) {
         double x0 = line.x1(), y0 = line.y1();
         double x1 = line.x2(), y1 = line.y2();
@@ -747,7 +747,7 @@ protected:
         return true;
     }
 
-    // æ±‚å¤šè¾¹å½¢ä¸­å¿ƒç‚¹ï¼Œç”¨äºæ—‹è½¬
+    // Çó¶à±ßĞÎÖĞĞÄµã£¬ÓÃÓÚĞı×ª
     Point getPolyCenter(vector<Point> Poly) {
         Point p0 = Poly[0];
         Point p1 = Poly[1];
@@ -760,9 +760,9 @@ protected:
             area = p0.Getx() * p1.Gety() + p1.Getx() * p2.Gety() + p2.Getx() * p0.Gety() - p1.Getx() * p0.Gety() - p2.Getx() * p1.Gety() - p0.Getx() * p2.Gety();
             area /= 2;
             sumarea += area;
-            sumx += (p0.Getx() + p1.Getx() + p2.Getx()) * area; //æ±‚âˆ‘cx[i] * s[i]å’Œâˆ‘cy[i] * s[i]
+            sumx += (p0.Getx() + p1.Getx() + p2.Getx()) * area; //Çó¡Æcx[i] * s[i]ºÍ¡Æcy[i] * s[i]
             sumy += (p0.Gety() + p1.Gety() + p2.Gety()) * area;
-            p1 = p2;//è½¬æ¢ä¸ºä¸‹ä¸€ä¸ªä¸‰è§’å½¢ï¼Œæ±‚æ€»é¢ç§¯
+            p1 = p2;//×ª»»ÎªÏÂÒ»¸öÈı½ÇĞÎ£¬Çó×ÜÃæ»ı
         }
         Center_X = (int)(sumx / sumarea / 3.0);
         Center_Y = (int)(sumy / sumarea / 3.0);
@@ -771,24 +771,24 @@ protected:
         return Point(Center_X, Center_Y);
     }
 
-    // è¾…åŠ©OnSegmentå‡½æ•°
+    // ¸¨ÖúOnSegmentº¯Êı
     int crossProduct(Point A, Point B, Point C) {
         return (B.Getx() - A.Getx()) * (C.Gety() - A.Gety()) - (C.Getx() - A.Getx()) * (B.Gety() - A.Gety());
     }
 
-    // è¾…åŠ©OnSegmentå‡½æ•°
+    // ¸¨ÖúOnSegmentº¯Êı
     int dotProduct(Point p1, Point p2) {
         return p1.Getx() * p2.Getx() + p1.Gety() * p2.Gety();
     }
 
-    //åˆ¤æ–­ç‚¹Qæ˜¯å¦åœ¨P1å’ŒP2çš„çº¿æ®µä¸Š
+    //ÅĞ¶ÏµãQÊÇ·ñÔÚP1ºÍP2µÄÏß¶ÎÉÏ
     bool OnSegment(Point P1, Point P2, Point Q) {
-        //å‰ä¸€ä¸ªåˆ¤æ–­ç‚¹Qåœ¨P1P2ç›´çº¿ä¸Š åä¸€ä¸ªåˆ¤æ–­åœ¨P1P2èŒƒå›´ä¸Š
+        //Ç°Ò»¸öÅĞ¶ÏµãQÔÚP1P2Ö±ÏßÉÏ ºóÒ»¸öÅĞ¶ÏÔÚP1P2·¶Î§ÉÏ
         //QP1 X QP2
         return crossProduct(Q, P1, P2) == 0 && dotProduct(P1 - Q, P2 - Q) <= 0;
     }
 
-    // ç»™å‡ºä¸¤ä¸ªç‚¹å’Œä¸€ä¸ªåŸç‚¹ï¼Œè®¡ç®—ä¸¤ç‚¹ä¸åŸç‚¹æ„æˆçš„å¤¹è§’
+    // ¸ø³öÁ½¸öµãºÍÒ»¸öÔ­µã£¬¼ÆËãÁ½µãÓëÔ­µã¹¹³ÉµÄ¼Ğ½Ç
     double getAngle(QPoint origin, QPoint p1, QPoint p2) {
         int x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y(), x3 = origin.x(), y3 = origin.y();
         double theta = atan2(x1 - x3, y1 - y3) - atan2(x2 - x3, y2 - y3);
@@ -804,7 +804,7 @@ protected:
         return theta;
     }
 
-    // ç»™å‡ºä¸¤ä¸ªç‚¹å’Œä¸€ä¸ªåŸç‚¹ï¼Œè®¡ç®—ä¸¤ç‚¹ä¸åŸç‚¹æ„æˆçš„å¤¹è§’
+    // ¸ø³öÁ½¸öµãºÍÒ»¸öÔ­µã£¬¼ÆËãÁ½µãÓëÔ­µã¹¹³ÉµÄ¼Ğ½Ç
     double getAngle(Point origin, Point p1, Point p2) {
         int x1 = p1.Getx(), y1 = p1.Gety(), x2 = p2.Getx(), y2 = p2.Gety(), x3 = origin.Getx(), y3 = origin.Gety();
         double theta = atan2(x1 - x3, y1 - y3) - atan2(x2 - x3, y2 - y3);
@@ -820,15 +820,15 @@ protected:
         return theta;
     }
 
-    // æµ‹è¯•pç‚¹æ˜¯å¦åœ¨å¤šè¾¹å½¢å†…éƒ¨
+    // ²âÊÔpµãÊÇ·ñÔÚ¶à±ßĞÎÄÚ²¿
     bool polyContains(vector<Point> polygon, Point P) {
-        bool flag = false; //ç›¸å½“äºè®¡æ•°
-        Point P1, P2; //å¤šè¾¹å½¢ä¸€æ¡è¾¹çš„ä¸¤ä¸ªé¡¶ç‚¹
+        bool flag = false; //Ïàµ±ÓÚ¼ÆÊı
+        Point P1, P2; //¶à±ßĞÎÒ»Ìõ±ßµÄÁ½¸ö¶¥µã
         for (int i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++) {
-            //polygon[]æ˜¯ç»™å‡ºå¤šè¾¹å½¢çš„é¡¶ç‚¹
+            //polygon[]ÊÇ¸ø³ö¶à±ßĞÎµÄ¶¥µã
             P1 = polygon[i];
             P2 = polygon[j];
-            if (OnSegment(P1, P2, P)) return true; //ç‚¹åœ¨å¤šè¾¹å½¢ä¸€æ¡è¾¹ä¸Š
+            if (OnSegment(P1, P2, P)) return true; //µãÔÚ¶à±ßĞÎÒ»Ìõ±ßÉÏ
             if (((P1.Gety() - P.Gety()) > 0 != (P2.Gety() - P.Gety()) > 0) &&
                 (P.Getx() - (P.Gety() - P1.Gety()) * (P1.Getx() - P2.Getx()) / (P1.Gety() - P2.Gety()) - P1.Getx()) < 0)
                 flag = !flag;
@@ -837,11 +837,11 @@ protected:
         return flag;
     }
 
-    // ä½¿ç”¨å˜æ¢çŸ©é˜µè¿›è¡Œå¤šè¾¹å½¢å˜æ¢
+    // Ê¹ÓÃ±ä»»¾ØÕó½øĞĞ¶à±ßĞÎ±ä»»
     void polygonTrans(QMouseEvent* e) {
         transMatrix trM;
-        double zoomPropor_X, zoomPropor_Y;  //è¿›è¡Œç¼©æ”¾çš„æ¯”ä¾‹
-        Point moveVector;              //è¿›è¡Œç§»åŠ¨çš„å‘é‡
+        double zoomPropor_X, zoomPropor_Y;  //½øĞĞËõ·ÅµÄ±ÈÀı
+        Point moveVector;              //½øĞĞÒÆ¶¯µÄÏòÁ¿
         double angle;
 
         tempTransPoly = *nowPolygon;
@@ -860,7 +860,7 @@ protected:
 
         switch (trans_algo) {
         case MOVE:
-            moveVector = Point(e->pos()) - _begin;    //è®¡ç®—ç§»åŠ¨å‘é‡ï¼Œç»ˆç‚¹å‡èµ·ç‚¹
+            moveVector = Point(e->pos()) - _begin;    //¼ÆËãÒÆ¶¯ÏòÁ¿£¬ÖÕµã¼õÆğµã
             trM.setMoveTrans(moveVector);
             for (int i = 0; i < (*nowPolygon).points.size(); ++i) {
                 //vector<Point> tem((*nowPolygon).points.size());
@@ -883,7 +883,7 @@ protected:
                     abs(e->pos().x() - referancePoint.Getx()) * 1.0 / abs(tempTransPoly.points[0].Getx() - referancePoint.Getx());
                 zoomPropor_Y =
                     abs(e->pos().y() - referancePoint.Gety()) * 1.0 / abs(tempTransPoly.points[0].Gety() - referancePoint.Gety());
-                trM.setZoomTrans(zoomPropor_X, zoomPropor_Y); //ç”Ÿæˆç¼©æ”¾å˜æ¢çŸ©é˜µ
+                trM.setZoomTrans(zoomPropor_X, zoomPropor_Y); //Éú³ÉËõ·Å±ä»»¾ØÕó
                 for (int i = 0; i < (*nowPolygon).points.size(); ++i) {
                     //(*nowPolygon)[i] = trM * tempTransPoly[i];
                     (*nowPolygon).points[i] = trM * tempTransPoly.points[i];
@@ -892,7 +892,7 @@ protected:
                     trM.setMoveTrans(getPolyCenter((*nowPolygon).points) - nowFill.point);
                     nowFill.point = trM * nowFill.point;
                 }
-                trM.setMoveTrans((*nowPolygon).points[0] - transRectTag->center()); //è®©æ ‡å¿—çŸ©å½¢ä¸­å¿ƒç‚¹è·Ÿéšç§»åŠ¨åˆ°æ–°ç‚¹
+                trM.setMoveTrans((*nowPolygon).points[0] - transRectTag->center()); //ÈÃ±êÖ¾¾ØĞÎÖĞĞÄµã¸úËæÒÆ¶¯µ½ĞÂµã
                 QPoint leftTop = QPoint((trM * (transRectTag->topLeft())).Getx(), (trM * (transRectTag->topLeft())).Gety());
                 transRectTag->setTopLeft(leftTop);
                 //transRectTag->setBottomRight(trM * (transRectTag->bottomRight()));
@@ -907,8 +907,8 @@ protected:
                 qDebug() << "in ROTATE!!!\n";
                 angle = getAngle(referancePoint, tempTransPoly.points[0], e->pos());
                 trM.setRotateTrans(angle);
-                if (angle > 30 || angle < -30)   /**æ—‹è½¬æ—¶è¿ç»­æ—‹è½¬è¶…è¿‡60å¤šåº¦æ—¶ä¼šå‡ºç°bugï¼Œç›®å‰åŸå› å°šä¸æ˜ç¡®ï¼Œå¤„ç†æ–¹æ³•ä¸ºæ¯æ¬¡è¶…è¿‡30åº¦æ—¶æ›´æ–°æš‚å­˜å¤šè¾¹å½¢ï¼Œåˆ™ä¸‹æ¬¡çš„è§’åº¦ä»é›¶è®¡ç®—**/
-                    iscomfirm = true;     /**åˆ‡å‹¿åˆ é™¤ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼**/
+                if (angle > 30 || angle < -30)   /**Ğı×ªÊ±Á¬ĞøĞı×ª³¬¹ı60¶à¶ÈÊ±»á³öÏÖbug£¬Ä¿Ç°Ô­ÒòÉĞ²»Ã÷È·£¬´¦Àí·½·¨ÎªÃ¿´Î³¬¹ı30¶ÈÊ±¸üĞÂÔİ´æ¶à±ßĞÎ£¬ÔòÏÂ´ÎµÄ½Ç¶È´ÓÁã¼ÆËã**/
+                    iscomfirm = true;     /**ÇĞÎğÉ¾³ı£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡**/
                 for (int i = 0; i < (*nowPolygon).points.size(); ++i) {
                     //(*nowPolygon)[i] = trM * tempTransPoly[i];
                     (*nowPolygon).points[i] = trM * tempTransPoly.points[i];
@@ -919,7 +919,7 @@ protected:
                     //(*nowFill) = trM * (*nowFill);
                     nowFill.point = trM * nowFill.point;
                 }
-                trM.setMoveTrans((*nowPolygon).points[0] - transRectTag->center()); //è®©æ ‡å¿—çŸ©å½¢ä¸­å¿ƒç‚¹è·Ÿéšç§»åŠ¨åˆ°æ–°ç‚¹
+                trM.setMoveTrans((*nowPolygon).points[0] - transRectTag->center()); //ÈÃ±êÖ¾¾ØĞÎÖĞĞÄµã¸úËæÒÆ¶¯µ½ĞÂµã
                 //transRectTag->setTopLeft(trM * (transRectTag->topLeft()));
                 //transRectTag->setBottomRight(trM * (transRectTag->bottomRight()));
                 transRectTag->setBottomRight(QPoint((trM * (transRectTag->topLeft())).Getx(), (trM * (transRectTag->topLeft())).Gety()));
@@ -930,7 +930,7 @@ protected:
         }
     }
 
-    // æ£€æµ‹ç‚¹æ˜¯å¦åœ¨å¤šè¾¹å½¢å¤–
+    // ¼ì²âµãÊÇ·ñÔÚ¶à±ßĞÎÍâ
     bool outsideOneEdgeOfPolygon(QVector<QPoint> polygon, QPoint p, int x) {
         QPoint p1 = polygon[x];
         QPoint p2 = polygon[(x + 1) % int(polygon.length())];
@@ -953,12 +953,12 @@ protected:
         }
     }
 
-    // åˆ¤æ–­ç‚¹pæ˜¯å¦ä½äºè£å‰ªè¾¹p1-p2çš„å†…ä¾§ï¼ˆé’ˆå¯¹å‡¸å¤šè¾¹å½¢ï¼‰
+    // ÅĞ¶ÏµãpÊÇ·ñÎ»ÓÚ²Ã¼ô±ßp1-p2µÄÄÚ²à£¨Õë¶ÔÍ¹¶à±ßĞÎ£©
     bool isInside(QPoint p, QPoint p1, QPoint p2) {
         return (p2.x() - p1.x()) * (p.y() - p1.y()) - (p2.y() - p1.y()) * (p.x() - p1.x()) <= 0;
     }
 
-    // è®¡ç®—ä¸¤æ¡çº¿æ®µçš„äº¤ç‚¹ï¼Œå¦‚æœå¹³è¡Œåˆ™è¿”å›QPoint(-1, -1)
+    // ¼ÆËãÁ½ÌõÏß¶ÎµÄ½»µã£¬Èç¹ûÆ½ĞĞÔò·µ»ØQPoint(-1, -1)
     QPoint intersection(QPoint p1, QPoint p2, QPoint k1, QPoint k2) {
         double a1 = p2.y() - p1.y();
         double b1 = p1.x() - p2.x();
@@ -970,8 +970,8 @@ protected:
 
         double determinant = a1 * b2 - a2 * b1;
 
-        if (std::abs(determinant) < 1e-10) {  // æ£€æŸ¥æ˜¯å¦å¹³è¡Œ
-            return QPoint(-1, -1); // å¹³è¡Œçº¿æ²¡æœ‰äº¤ç‚¹
+        if (std::abs(determinant) < 1e-10) {  // ¼ì²éÊÇ·ñÆ½ĞĞ
+            return QPoint(-1, -1); // Æ½ĞĞÏßÃ»ÓĞ½»µã
         }
         else {
             double x = (b2 * c1 - b1 * c2) / determinant;
@@ -980,7 +980,7 @@ protected:
         }
     }
 
-    // æ ¹æ®ç»™å®šå¤šè¾¹å½¢è£å‰ªç°æœ‰å¤šè¾¹å½¢
+    // ¸ù¾İ¸ø¶¨¶à±ßĞÎ²Ã¼ôÏÖÓĞ¶à±ßĞÎ
     QVector<QPoint> cropPolygon(const QVector<QPoint>& subjectPolygon, const QVector<QPoint>& clipPolygon) {
         QVector<QPoint> output = subjectPolygon;
 
@@ -988,12 +988,12 @@ protected:
             QVector<QPoint> input = output;
             output.clear();
 
-            // å½“å‰è£å‰ªè¾¹çš„ä¸¤ä¸ªé¡¶ç‚¹
+            // µ±Ç°²Ã¼ô±ßµÄÁ½¸ö¶¥µã
             QPoint clipEdgeStart = clipPolygon[i];
             QPoint clipEdgeEnd = clipPolygon[(i + 1) % clipPolygon.size()];
 
             for (int j = 0; j < input.size(); ++j) {
-                // è¢«è£å‰ªå¤šè¾¹å½¢å½“å‰è¾¹çš„ä¸¤ä¸ªé¡¶ç‚¹
+                // ±»²Ã¼ô¶à±ßĞÎµ±Ç°±ßµÄÁ½¸ö¶¥µã
                 QPoint currentPoint = input[j];
                 QPoint previousPoint = input[(j - 1 + input.size()) % input.size()];
 
@@ -1002,17 +1002,17 @@ protected:
 
                 if (currentInside) {
                     if (!previousInside) {
-                        // å¦‚æœä»å¤–éƒ¨è¿›å…¥ï¼Œè®¡ç®—äº¤ç‚¹
+                        // Èç¹û´ÓÍâ²¿½øÈë£¬¼ÆËã½»µã
                         QPoint inter = intersection(previousPoint, currentPoint, clipEdgeStart, clipEdgeEnd);
-                        output.append(inter); // æ·»åŠ äº¤ç‚¹
+                        output.append(inter); // Ìí¼Ó½»µã
                     }
-                    // å½“å‰ç‚¹åœ¨å†…ä¾§ï¼Œä¿ç•™è¯¥ç‚¹
+                    // µ±Ç°µãÔÚÄÚ²à£¬±£Áô¸Ãµã
                     output.append(currentPoint);
                 }
                 else if (previousInside) {
-                    // å¦‚æœä»å†…éƒ¨ç¦»å¼€ï¼Œè®¡ç®—äº¤ç‚¹
+                    // Èç¹û´ÓÄÚ²¿Àë¿ª£¬¼ÆËã½»µã
                     QPoint inter = intersection(previousPoint, currentPoint, clipEdgeStart, clipEdgeEnd);
-                    output.append(inter); // æ·»åŠ äº¤ç‚¹
+                    output.append(inter); // Ìí¼Ó½»µã
                 }
             }
         }
@@ -1020,17 +1020,17 @@ protected:
         return output;
     }
 
-    // å¤„ç†é¼ æ ‡ç§»åŠ¨äº‹ä»¶
+    // ´¦ÀíÊó±êÒÆ¶¯ÊÂ¼ş
     void mouseMoveEvent(QMouseEvent* event) override {
-        // è·å–é¼ æ ‡çš„å±€éƒ¨åæ ‡ï¼ˆç›¸å¯¹äºçª—å£ï¼‰
+        // »ñÈ¡Êó±êµÄ¾Ö²¿×ø±ê£¨Ïà¶ÔÓÚ´°¿Ú£©
         QPoint localPos = event->pos();
 
-        // æ›´æ–°æ ‡ç­¾æ˜¾ç¤ºçš„é¼ æ ‡åæ ‡
+        // ¸üĞÂ±êÇ©ÏÔÊ¾µÄÊó±ê×ø±ê
         coordLabel->setText(QString("(%1, %2)")
                                 .arg(localPos.x())
                                 .arg(localPos.y()));
 
-        // å®šä½å½“å‰é¼ æ ‡æ‰€æŒ‡çš„å¤šè¾¹å½¢
+        // ¶¨Î»µ±Ç°Êó±êËùÖ¸µÄ¶à±ßĞÎ
         if (polygons.size() > 0) {
             for (int i = 0; i < polygons.size(); i++) {
                 if (polyContains(polygons[i].points, Point(event->pos().x(), event->pos().y()))) {
@@ -1060,14 +1060,14 @@ protected:
         update();
 
         if (!isArrow && mode == TransMode) {
-            setCursor(Qt::SizeAllCursor);//æ‹–æ‹½æ¨¡å¼ä¸‹ï¼Œå¹¶ä¸”åœ¨æ‹–æ‹½å›¾å½¢ä¸­ï¼Œå°†å…‰æ ‡å½¢çŠ¶æ”¹ä¸ºåå­—
+            setCursor(Qt::SizeAllCursor);//ÍÏ×§Ä£Ê½ÏÂ£¬²¢ÇÒÔÚÍÏ×§Í¼ĞÎÖĞ£¬½«¹â±êĞÎ×´¸ÄÎªÊ®×Ö
             if (!(*nowPolygon).points.empty()) {
                 polygonTrans(event);
                 update();
             }
         }
         else {
-            setCursor(Qt::ArrowCursor);//æ¢å¤åŸå§‹å…‰æ ‡å½¢çŠ¶
+            setCursor(Qt::ArrowCursor);//»Ö¸´Ô­Ê¼¹â±êĞÎ×´
         }
 
         if (isInPolygon) {
@@ -1081,7 +1081,7 @@ protected:
         if (hasStartPoint)
         {
             if (mode == LineMode) {
-                // æ›´æ–°ç»ˆç‚¹ä¸ºå½“å‰é¼ æ ‡ä½ç½®
+                // ¸üĞÂÖÕµãÎªµ±Ç°Êó±êÎ»ÖÃ
                 endPoint = event->pos();
             }
             else if (mode == CircleMode) {
@@ -1095,39 +1095,39 @@ protected:
                 QPoint currentPos = event->pos();
                 radius = std::sqrt(std::pow(currentPos.x() - center.x(), 2) + std::pow(currentPos.y() - center.y(), 2));
 
-                // è®¡ç®—å½“å‰é¼ æ ‡ä½ç½®ä¸åœ†å¿ƒçš„è§’åº¦
+                // ¼ÆËãµ±Ç°Êó±êÎ»ÖÃÓëÔ²ĞÄµÄ½Ç¶È
                 float angleRad = atan2(currentPos.y() - center.y(), currentPos.x() - center.x());
-                endAngle = static_cast<int>(angleRad * 180.0 / M_PI); // è½¬æ¢ä¸ºè§’åº¦
+                endAngle = static_cast<int>(angleRad * 180.0 / M_PI); // ×ª»»Îª½Ç¶È
 
                 if (endAngle < 0) {
-                    endAngle += 360;  // ç¡®ä¿è§’åº¦ä¸ºæ­£
+                    endAngle += 360;  // È·±£½Ç¶ÈÎªÕı
                 }
             }
             else if (mode == TrimMode) {
-                // è¿™ä¸ªelse ifä¸ºä»€ä¹ˆè¦æ”¾åœ¨ ArcMode é‡Œé¢ï¼Ÿï¼Ÿï¼Ÿ
-                // æ”¾é‡Œé¢å½“ç„¶ç”¨ä¸äº†é‡ç»˜å•¦
+                // Õâ¸öelse ifÎªÊ²Ã´Òª·ÅÔÚ ArcMode ÀïÃæ£¿£¿£¿
+                // ·ÅÀïÃæµ±È»ÓÃ²»ÁËÖØ»æÀ²
                 clipEndPoint = event->pos();
             }
             else if (mode == BezierMode && isOnPoint1 != -1 && !ctr_or_not) {
-                currentBezierControlPoints[isOnPoint1] = event->pos(); // æ›´æ–°å½“å‰Bezieræ›²çº¿æ§åˆ¶ç‚¹ä½ç½®
+                currentBezierControlPoints[isOnPoint1] = event->pos(); // ¸üĞÂµ±Ç°BezierÇúÏß¿ØÖÆµãÎ»ÖÃ
             }
             else if (mode == BezierMode && SelectedBezier != -1 && SelectedPoint != -1 && ctr_or_not) {
-                all_beziers[SelectedBezier][SelectedPoint] = event->pos();// æ›´æ–°æ‰€æœ‰Bezieræ›²çº¿æ§åˆ¶ç‚¹ä½ç½®
+                all_beziers[SelectedBezier][SelectedPoint] = event->pos();// ¸üĞÂËùÓĞBezierÇúÏß¿ØÖÆµãÎ»ÖÃ
             }
             else if (mode == BsplineMode && isOnPoint2 != -1 && !ctr_or_not) {
-                currentBsplineControlPoints[isOnPoint2] = event->pos(); // æ›´æ–°å½“å‰Bezieræ›²çº¿æ§åˆ¶ç‚¹ä½ç½®
+                currentBsplineControlPoints[isOnPoint2] = event->pos(); // ¸üĞÂµ±Ç°BezierÇúÏß¿ØÖÆµãÎ»ÖÃ
             }
             else if (mode == BsplineMode && SelectedBspline != -1 && SelectedPoint != -1 && ctr_or_not) {
-                all_bsplines[SelectedBspline][SelectedPoint] = event->pos();// æ›´æ–°æ‰€æœ‰Bezieræ›²çº¿æ§åˆ¶ç‚¹ä½ç½®
+                all_bsplines[SelectedBspline][SelectedPoint] = event->pos();// ¸üĞÂËùÓĞBezierÇúÏß¿ØÖÆµãÎ»ÖÃ
             }
 
-            update(); // è§¦å‘é‡ç»˜
+            update(); // ´¥·¢ÖØ»æ
         }
     }
 
-    // å¤„ç†é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
+    // ´¦ÀíÊó±ê°´ÏÂÊÂ¼ş
     void mousePressEvent(QMouseEvent* event) override {
-        setCursor(Qt::ArrowCursor);//æ¢å¤åŸå§‹å…‰æ ‡å½¢çŠ¶
+        setCursor(Qt::ArrowCursor);//»Ö¸´Ô­Ê¼¹â±êĞÎ×´
         if (event->button() == Qt::MiddleButton) {
             if (mode == TransMode) {
                 referancePoint = event->pos();
@@ -1143,43 +1143,43 @@ protected:
 
         if (!hasStartPoint) {
             if (mode == LineMode) {
-                // ç¬¬ä¸€æ¬¡ç‚¹å‡»ï¼šè®°å½•èµ·ç‚¹
+                // µÚÒ»´Îµã»÷£º¼ÇÂ¼Æğµã
                 startPoint = event->pos();
-                endPoint = startPoint;      // åˆå§‹åŒ–ç»ˆç‚¹ä¸ºèµ·ç‚¹
+                endPoint = startPoint;      // ³õÊ¼»¯ÖÕµãÎªÆğµã
                 shape.push_back(1);
             }
             else if (mode == CircleMode) {
-                center = event->pos();      // è®°å½•åœ†å¿ƒ
+                center = event->pos();      // ¼ÇÂ¼Ô²ĞÄ
                 hasStartPoint = true;
                 shape.push_back(2);
             }
             else if (mode == ArcMode && counter == 0) {
-                center = event->pos();      // è®°å½•åœ†å¿ƒ
+                center = event->pos();      // ¼ÇÂ¼Ô²ĞÄ
                 shape.push_back(2);
             }
             else if (mode == ArcMode && counter == 1) {
-                // è®¡ç®—å½“å‰é¼ æ ‡ä½ç½®ä¸åœ†å¿ƒçš„è§’åº¦
+                // ¼ÆËãµ±Ç°Êó±êÎ»ÖÃÓëÔ²ĞÄµÄ½Ç¶È
                 float angleRad = atan2(event->pos().y() - center.y(), event->pos().x() - center.x());
-                startAngle = static_cast<int>(angleRad * 180.0 / M_PI); // è½¬æ¢ä¸ºè§’åº¦
+                startAngle = static_cast<int>(angleRad * 180.0 / M_PI); // ×ª»»Îª½Ç¶È
                 if (startAngle < 0) {
-                    startAngle += 360;  // ç¡®ä¿è§’åº¦ä¸ºæ­£
+                    startAngle += 360;  // È·±£½Ç¶ÈÎªÕı
                 }
             }
             else if (mode == PolygonMode) {
-                // è·å–é¼ æ ‡ç‚¹å‡»çš„ä½ç½®
+                // »ñÈ¡Êó±êµã»÷µÄÎ»ÖÃ
                 int x = event->pos().x();
                 int y = event->pos().y();
-                currentPolygon.addPoint(Point(x, y)); // æ·»åŠ é¡¶ç‚¹
-                currentPolygon.color = currentLineColor; // ä¿®æ”¹å¤šè¾¹å½¢é¢œè‰²
+                currentPolygon.addPoint(Point(x, y)); // Ìí¼Ó¶¥µã
+                currentPolygon.color = currentLineColor; // ĞŞ¸Ä¶à±ßĞÎÑÕÉ«
 
-                update(); // è§¦å‘ç•Œé¢é‡ç»˜
+                update(); // ´¥·¢½çÃæÖØ»æ
             }
             else if (mode == FillMode) {
                 fills.push_back(Fill(Point(event->pos().x(), event->pos().y()), currentLineColor));
                 shape.push_back(4);
             }
             else if (mode == TrimMode && clip_algo != CropPolygon) {
-                clipStartPoint = event->pos();  // è®°å½•é¼ æ ‡æŒ‰ä¸‹çš„ä½ç½®ä½œä¸ºèµ·ç‚¹
+                clipStartPoint = event->pos();  // ¼ÇÂ¼Êó±ê°´ÏÂµÄÎ»ÖÃ×÷ÎªÆğµã
                 clipEndPoint = clipStartPoint;
             }
             else if (mode == TrimMode && clip_algo == CropPolygon) {
@@ -1191,30 +1191,30 @@ protected:
             }
             else if (mode == BezierMode && !ctr_or_not) {
                 QPoint pos = event->pos();
-                // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»åœ¨å·²æœ‰çš„æ§åˆ¶ç‚¹é™„è¿‘
+                // ¼ì²éÊÇ·ñµã»÷ÔÚÒÑÓĞµÄ¿ØÖÆµã¸½½ü
                 bool pointSelected = false;
                 for (int i = 0; i < currentBezierControlPoints.size(); ++i) {
                     if ((pos - currentBezierControlPoints[i]).manhattanLength() < 10) {
-                        isOnPoint1 = i;  // é€‰æ‹©å·²æœ‰çš„ç‚¹è¿›è¡Œæ‹–åŠ¨
+                        isOnPoint1 = i;  // Ñ¡ÔñÒÑÓĞµÄµã½øĞĞÍÏ¶¯
                         pointSelected = true;
                         break;
                     }
                 }
                 if (!pointSelected) {
-                    // æ·»åŠ æ–°çš„æ§åˆ¶ç‚¹
+                    // Ìí¼ÓĞÂµÄ¿ØÖÆµã
                     currentBezierControlPoints.append(pos);
-                    isOnPoint1 = -1; // ä¸é€‰ä¸­æ–°ç‚¹
+                    isOnPoint1 = -1; // ²»Ñ¡ÖĞĞÂµã
                 }
-                update(); // æ›´æ–°ç»˜å›¾
+                update(); // ¸üĞÂ»æÍ¼
             }
             else if (mode == BezierMode && ctr_or_not) {
                 QPoint pos = event->pos();
-                // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»åœ¨å·²æœ‰çš„æ§åˆ¶ç‚¹é™„è¿‘
+                // ¼ì²éÊÇ·ñµã»÷ÔÚÒÑÓĞµÄ¿ØÖÆµã¸½½ü
                 bool pointSelected = false;
                 for (int i = 0; i < all_beziers.size(); ++i) {
                     for (int j = 0; j < all_beziers[i].size(); j++) {
                         if ((pos - all_beziers[i][j]).manhattanLength() < 10) {
-                            SelectedBezier = i;  // é€‰æ‹©å·²æœ‰çš„ç‚¹è¿›è¡Œæ‹–åŠ¨
+                            SelectedBezier = i;  // Ñ¡ÔñÒÑÓĞµÄµã½øĞĞÍÏ¶¯
                             SelectedPoint = j;
                             pointSelected = true;
                             break;
@@ -1222,37 +1222,37 @@ protected:
                     }
                 }
                 if (!pointSelected) {
-                    SelectedBezier = -1; // ä¸é€‰ä¸­æ–°ç‚¹
+                    SelectedBezier = -1; // ²»Ñ¡ÖĞĞÂµã
                     SelectedPoint = -1;
                 }
             }
             else if (mode == BsplineMode && !ctr_or_not) {
                 QPoint pos = event->pos();
-                // æ£€æŸ¥å·²æœ‰ç»˜åˆ¶ç‚¹
+                // ¼ì²éÒÑÓĞ»æÖÆµã
                 bool pointSelected = false;
                 for (int i = 0; i < currentBsplineControlPoints.size(); ++i) {
                     if ((pos - currentBsplineControlPoints[i]).manhattanLength() < 10) {
-                        isOnPoint2 = i;  // é€‰æ‹©å·²æœ‰çš„ç‚¹è¿›è¡Œæ‹–åŠ¨
+                        isOnPoint2 = i;  // Ñ¡ÔñÒÑÓĞµÄµã½øĞĞÍÏ¶¯
                         pointSelected = true;
                         break;
                     }
                 }
                 if (!pointSelected) {
-                    // æ·»åŠ æ–°çš„æ§åˆ¶ç‚¹
+                    // Ìí¼ÓĞÂµÄ¿ØÖÆµã
                     currentBsplineControlPoints.append(pos);
                     qDebug() << "x:" << event->pos().x() << "y:" << event->pos().y() << "\n";
-                    isOnPoint2 = -1; // ä¸é€‰ä¸­æ–°ç‚¹
+                    isOnPoint2 = -1; // ²»Ñ¡ÖĞĞÂµã
                 }
-                update(); // æ›´æ–°ç»˜å›¾
+                update(); // ¸üĞÂ»æÍ¼
             }
             else if (mode == BsplineMode && ctr_or_not) {
                 QPoint pos = event->pos();
-                // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»åœ¨å·²æœ‰çš„æ§åˆ¶ç‚¹é™„è¿‘
+                // ¼ì²éÊÇ·ñµã»÷ÔÚÒÑÓĞµÄ¿ØÖÆµã¸½½ü
                 bool pointSelected = false;
                 for (int i = 0; i < all_bsplines.size(); ++i) {
                     for (int j = 0; j < all_bsplines[i].size(); j++) {
                         if ((pos - all_bsplines[i][j]).manhattanLength() < 10) {
-                            SelectedBspline = i;  // é€‰æ‹©å·²æœ‰çš„ç‚¹è¿›è¡Œæ‹–åŠ¨
+                            SelectedBspline = i;  // Ñ¡ÔñÒÑÓĞµÄµã½øĞĞÍÏ¶¯
                             SelectedPoint = j;
                             pointSelected = true;
                             break;
@@ -1260,27 +1260,27 @@ protected:
                     }
                 }
                 if (!pointSelected) {
-                    SelectedBspline = -1; // ä¸é€‰ä¸­æ–°ç‚¹
+                    SelectedBspline = -1; // ²»Ñ¡ÖĞĞÂµã
                     SelectedPoint = -1;
                 }
             }
 
             hasStartPoint = true;
-            drawing = false; // åˆå§‹åŒ–ä¸ºä¸ç»˜åˆ¶å®é™…ç›´çº¿
+            drawing = false; // ³õÊ¼»¯Îª²»»æÖÆÊµ¼ÊÖ±Ïß
         }
     }
 
-    // å¤„ç†é¼ æ ‡æ¾å¼€äº‹ä»¶
+    // ´¦ÀíÊó±êËÉ¿ªÊÂ¼ş
     void mouseReleaseEvent(QMouseEvent* event) override
     {
         if (hasStartPoint)
         {
             if (mode == LineMode) {
-                endPoint = event->pos();  // ç›´çº¿æ¨¡å¼ä¸‹ï¼Œæ¾å¼€è®¾å®šç»ˆç‚¹
+                endPoint = event->pos();  // Ö±ÏßÄ£Ê½ÏÂ£¬ËÉ¿ªÉè¶¨ÖÕµã
                 lines.append(Line(startPoint, endPoint, lineWidth, currentLineColor, line_algo));
             }
             else if (mode == CircleMode) {
-                endPoint = event->pos();  // åœ†æ¨¡å¼ä¸‹ï¼Œè®¡ç®—åŠå¾„
+                endPoint = event->pos();  // Ô²Ä£Ê½ÏÂ£¬¼ÆËã°ë¾¶
                 radius = std::sqrt(std::pow(endPoint.x() - center.x(), 2) + std::pow(endPoint.y() - center.y(), 2));
                 arcs.append(Arc(center, radius, startAngle, endAngle, lineWidth, currentLineColor));
             }
@@ -1288,7 +1288,7 @@ protected:
                 counter += 1;
             }
             else if (mode == ArcMode && counter == 1) {
-                endPoint = event->pos();  // åœ†å¼§æ¨¡å¼ä¸‹ï¼Œè®¡ç®—åŠå¾„
+                endPoint = event->pos();  // Ô²»¡Ä£Ê½ÏÂ£¬¼ÆËã°ë¾¶
                 radius = std::sqrt(std::pow(endPoint.x() - center.x(), 2) + std::pow(endPoint.y() - center.y(), 2));
                 arcs.append(Arc(center, radius, startAngle, endAngle, lineWidth, currentLineColor));
                 counter = 0;
@@ -1297,13 +1297,13 @@ protected:
                 // drawingrect = false;
                 qDebug() << "Trim the line.\n";
                 clipEndPoint = event->pos();
-                // ç¡®å®šè£å‰ªçŸ©å½¢çš„å·¦ä¸Šã€å³ä¸‹ä¸¤ä¸ªé¡¶ç‚¹
+                // È·¶¨²Ã¼ô¾ØĞÎµÄ×óÉÏ¡¢ÓÒÏÂÁ½¸ö¶¥µã
                 double xmin = min(clipStartPoint.x(), clipEndPoint.x());
                 double ymin = min(clipStartPoint.y(), clipEndPoint.y());
                 double xmax = max(clipStartPoint.x(), clipEndPoint.x());
                 double ymax = max(clipStartPoint.y(), clipEndPoint.y());
 
-                // æ›´æ–°åœ¨è£å‰ªæ¡†å†…çš„ç›´çº¿çš„èµ·å§‹ä¸ç»“æŸç«¯ç‚¹
+                // ¸üĞÂÔÚ²Ã¼ô¿òÄÚµÄÖ±ÏßµÄÆğÊ¼Óë½áÊø¶Ëµã
                 for (Line& line : lines) {
                     QLineF lineF(line.line);
                     if (clip_algo == SutherlandTrim) {
@@ -1326,26 +1326,26 @@ protected:
                 isOnPoint2 = -1;  // Deselect control point
             }
 
-            drawing = true;         // ç»˜åˆ¶å®Œæˆ
-            update();               // è§¦å‘é‡ç»˜
-            hasStartPoint = false;  // é‡ç½®ï¼Œå…è®¸å†æ¬¡ç»˜åˆ¶æ–°çš„çº¿æ®µ
+            drawing = true;         // »æÖÆÍê³É
+            update();               // ´¥·¢ÖØ»æ
+            hasStartPoint = false;  // ÖØÖÃ£¬ÔÊĞíÔÙ´Î»æÖÆĞÂµÄÏß¶Î
             drawing = false;
         }
     }
 
-    // å¤„ç†åŒå‡»é¼ æ ‡äº‹ä»¶
+    // ´¦ÀíË«»÷Êó±êÊÂ¼ş
     void mouseDoubleClickEvent(QMouseEvent* event) override {
-        // åŒå‡»äº‹ä»¶å°é—­å½“å‰å¤šè¾¹å½¢
+        // Ë«»÷ÊÂ¼ş·â±Õµ±Ç°¶à±ßĞÎ
         if (mode == PolygonMode) {
             if (currentPolygon.points.size() > 2) {
-                currentPolygon.closePolygon(); // å°é—­å½“å‰å¤šè¾¹å½¢
+                currentPolygon.closePolygon(); // ·â±Õµ±Ç°¶à±ßĞÎ
                 shape.push_back(3);
-                polygons.push_back(currentPolygon); // ä¿å­˜åˆ°å¤šè¾¹å½¢åˆ—è¡¨
-                currentPolygon = Polygon(); // é‡ç½®å½“å‰å¤šè¾¹å½¢ä»¥å¼€å§‹æ–°çš„ç»˜åˆ¶
+                polygons.push_back(currentPolygon); // ±£´æµ½¶à±ßĞÎÁĞ±í
+                currentPolygon = Polygon(); // ÖØÖÃµ±Ç°¶à±ßĞÎÒÔ¿ªÊ¼ĞÂµÄ»æÖÆ
                 update();
             }
         }
-        // åŒå‡»äº‹ä»¶å°é—­å½“å‰å¤šè¾¹å½¢è£å‰ªåŒºåŸŸ
+        // Ë«»÷ÊÂ¼ş·â±Õµ±Ç°¶à±ßĞÎ²Ã¼ôÇøÓò
         if (mode == TrimMode && clip_algo == CropPolygon) {
             update();
             QVector<QVector<QPoint>> newPolygon;
@@ -1359,7 +1359,7 @@ protected:
                     qDebug() << "now the p has ::" << polygon.size() << "<<\n";
                     if (polygon.length() >= 3) {
                         qDebug() << "has new Polygon!\n";
-                        // å¦‚æœè¿”å›çš„å¤šè¾¹å½¢çš„é•¿åº¦å¤§äºç­‰äº3ï¼Œåˆ™è¯´æ˜è£åˆ‡åçš„å¤šè¾¹å½¢ä¸ä¸ºç©ºï¼Œå°†ä»–ä»¬è¿½åŠ åˆ°æ–°çš„å¤šè¾¹å½¢æ•°ç»„ä¸­
+                        // Èç¹û·µ»ØµÄ¶à±ßĞÎµÄ³¤¶È´óÓÚµÈÓÚ3£¬ÔòËµÃ÷²ÃÇĞºóµÄ¶à±ßĞÎ²»Îª¿Õ£¬½«ËûÃÇ×·¼Óµ½ĞÂµÄ¶à±ßĞÎÊı×éÖĞ
                         newPolygon.append(polygon);
                     }
                     deleteIndex.push_back(i);
@@ -1379,7 +1379,7 @@ protected:
         }
     }
 
-    // å¤„ç†æŒ‰é”®äº‹ä»¶
+    // ´¦Àí°´¼üÊÂ¼ş
     void keyPressEvent(QKeyEvent* event) override {
         if (mode == BezierMode && event->key() == Qt::Key_Return) {
             all_beziers.append(currentBezierControlPoints);
@@ -1448,27 +1448,27 @@ public:
     ShapeDrawer(QWidget* parent = nullptr) : QWidget(parent), mode(LineMode), hasStartPoint(false), drawing(false),
         radius(0), startAngle(0), endAngle(360)
     {
-        // è®¾ç½®èƒŒæ™¯é¢œè‰²
+        // ÉèÖÃ±³¾°ÑÕÉ«
         QPalette pal = this->palette();
-        pal.setColor(QPalette::Window, Qt::white); // è¿™é‡Œè®¾ç½®èƒŒæ™¯é¢œè‰²ä¸ºç™½è‰²
-        this->setAutoFillBackground(true);  // å¯ç”¨è‡ªåŠ¨å¡«å……èƒŒæ™¯
+        pal.setColor(QPalette::Window, Qt::white); // ÕâÀïÉèÖÃ±³¾°ÑÕÉ«Îª°×É«
+        this->setAutoFillBackground(true);  // ÆôÓÃ×Ô¶¯Ìî³ä±³¾°
         this->setPalette(pal);
 
-        // ç»˜å›¾çª—å£å¤§å°â†“
+        // »æÍ¼´°¿Ú´óĞ¡¡ı
         setFixedSize(800, 550);
         initMAP(MAP);
 
-        // ä¸ºå››è¾¹ç»˜åˆ¶å››æ¡ç›´çº¿ï¼Œé˜²æ­¢å¡«å……æº¢å‡º
+        // ÎªËÄ±ß»æÖÆËÄÌõÖ±Ïß£¬·ÀÖ¹Ìî³äÒç³ö
         std::vector<vector<int>> tem = { {0,0},{799,0},{799,549}, {0,549},{0,0} };
         for (int i = 0; i < 4; ++i) {
             lines.append(Line(QPoint(tem[i][0], tem[i][1]), QPoint(tem[i + 1][0], tem[i + 1][1]), 1, Qt::black, Midpoint));
             shape.append(1);
         }
 
-        // ç¡®ä¿çª—å£éƒ¨ä»¶å¯ä»¥æ¥æ”¶é”®ç›˜ç„¦ç‚¹
+        // È·±£´°¿Ú²¿¼ş¿ÉÒÔ½ÓÊÕ¼üÅÌ½¹µã
         setFocusPolicy(Qt::StrongFocus);
 
-        // åˆ›å»ºä¸€ä¸ªæ ‡ç­¾ç”¨äºæ˜¾ç¤ºé¼ æ ‡åæ ‡
+        // ´´½¨Ò»¸ö±êÇ©ÓÃÓÚÏÔÊ¾Êó±ê×ø±ê
 
         coordLabel = new QLabel("(0, 0)", this);
         coordLabel->setMinimumWidth(250);
@@ -1477,62 +1477,62 @@ public:
         statusBar->setGeometry(0, 525, 600, 20);
         statusBar->setStyleSheet("border: solid black 2px;");
 
-        // å¯ç”¨é¼ æ ‡è¿½è¸ªï¼ˆå¦åˆ™åªåœ¨æŒ‰ä¸‹æŒ‰é’®æ—¶æ‰ä¼šè¿½è¸ªé¼ æ ‡ç§»åŠ¨ï¼‰
+        // ÆôÓÃÊó±ê×·×Ù£¨·ñÔòÖ»ÔÚ°´ÏÂ°´Å¥Ê±²Å»á×·×ÙÊó±êÒÆ¶¯£©
         // setMouseTracking(true);
     }
 
-    // è®¾ç½®å½“å‰ç»˜å›¾æ¨¡å¼
+    // ÉèÖÃµ±Ç°»æÍ¼Ä£Ê½
     void setDrawMode(DrawMode newMode) {
         mode = newMode;
-        update();  // æ¨¡å¼åˆ‡æ¢åé‡æ–°ç»˜åˆ¶
+        update();  // Ä£Ê½ÇĞ»»ºóÖØĞÂ»æÖÆ
     }
 
-    // æ–°å¢ï¼šè®¾ç½®çº¿æ¡å®½åº¦çš„å‡½æ•°
+    // ĞÂÔö£ºÉèÖÃÏßÌõ¿í¶ÈµÄº¯Êı
     void setLineWidth(int width) {
         lineWidth = width;
-        update();  // æ¯æ¬¡æ”¹å˜å®½åº¦æ—¶ï¼Œè§¦å‘é‡æ–°ç»˜åˆ¶
+        update();  // Ã¿´Î¸Ä±ä¿í¶ÈÊ±£¬´¥·¢ÖØĞÂ»æÖÆ
     }
 
-    //  æ–°å¢ï¼šè®¾ç½®å½“å‰çº¿æ¡é¢œè‰²
+    //  ĞÂÔö£ºÉèÖÃµ±Ç°ÏßÌõÑÕÉ«
     void setCurrentLineColor(QColor color) {
         currentLineColor = color;
         update();
     }
 
-    //  æ–°å¢ï¼šè®¾ç½®å½“å‰ç®—æ³•
+    //  ĞÂÔö£ºÉèÖÃµ±Ç°Ëã·¨
     void setAlgorithm(line_Algorithm algo)
     {
         line_algo = algo;
-        // update(); // æ”¹å˜ç®—æ³•åé‡æ–°ç»˜åˆ¶
+        // update(); // ¸Ä±äËã·¨ºóÖØĞÂ»æÖÆ
     }
 
-    // æ–°å¢è®¾ç½®è£å‰ªç›´çº¿æ®µç®—æ³•
+    // ĞÂÔöÉèÖÃ²Ã¼ôÖ±Ïß¶ÎËã·¨
     void setclipAlgorithm(clip_Algorithm algo)
     {
         clip_algo = algo;
     }
 
-    // æ–°å¢è®¾ç½®å˜å½¢æ¨¡å¼
+    // ĞÂÔöÉèÖÃ±äĞÎÄ£Ê½
     void setTransAlgorithm(transMode algo)
     {
         trans_algo = algo;
     }
 
-    // æ–°å¢ï¼šè®¾ç½®åœ†å¼§çš„èµ·å§‹è§’åº¦å’Œç»“æŸè§’åº¦
+    // ĞÂÔö£ºÉèÖÃÔ²»¡µÄÆğÊ¼½Ç¶ÈºÍ½áÊø½Ç¶È
     void setArcAngles(int start, int end) {
         startAngle = start;
         endAngle = end;
-        update();  // è§¦å‘é‡ç»˜
+        update();  // ´¥·¢ÖØ»æ
     }
 
-    // æ–°å¢ï¼šè®¾ç½®Bæ ·æ›²çº¿é˜¶æ•°
+    // ĞÂÔö£ºÉèÖÃBÑùÇúÏß½×Êı
     void setk_step(int k_value) {
         last_k = k_value;
         //k_steps.push_back(k_value);
         update();
     }
 
-    // æ–°å¢ï¼šæ¸…ç©ºç”»å¸ƒåŠŸèƒ½
+    // ĞÂÔö£ºÇå¿Õ»­²¼¹¦ÄÜ
     void Clear()
     {
         shape.clear();
@@ -1556,21 +1556,21 @@ class MainWindow : public QWidget {
     // Q_OBJECT
 
 private:
-    ShapeDrawer* shapeDrawer;       // è´Ÿè´£ç»˜åˆ¶å½¢çŠ¶çš„åŒºåŸŸ
-    QComboBox* modeComboBox;        // ç”¨äºé€‰æ‹©ç»˜åˆ¶æ¨¡å¼çš„ç»„åˆæ¡†
-    QComboBox* line_algorithmComboBox;   // æ–°å¢ï¼šç›´çº¿ç®—æ³• é€‰æ‹©æŒ‰é’®
-    QComboBox* clip_algorithmComboBox;	// æ–°å¢ï¼šç›´çº¿æ®µè£å‰ªç®—æ³• é€‰æ‹©æŒ‰é’®
-    QSlider* widthSlider;           // æ–°å¢ï¼šæ§åˆ¶çº¿æ¡å®½åº¦ æ»‘åŠ¨æ¡
-    QPushButton* colorButton;       // æ–°å¢ï¼šé¢œè‰² é€‰æ‹©æŒ‰é’®
-    QComboBox* lineTypeComboBox;    // æ–°å¢ï¼šçº¿å‹ é€‰æ‹©æŒ‰é’®
-    QComboBox* transModeComboBox;    // æ–°å¢ï¼šçº¿å‹ é€‰æ‹©æŒ‰é’®
-    QPushButton* clearButton;		// æ–°å¢ï¼šæ¸…é™¤æŒ‰é’®
+    ShapeDrawer* shapeDrawer;       // ¸ºÔğ»æÖÆĞÎ×´µÄÇøÓò
+    QComboBox* modeComboBox;        // ÓÃÓÚÑ¡Ôñ»æÖÆÄ£Ê½µÄ×éºÏ¿ò
+    QComboBox* line_algorithmComboBox;   // ĞÂÔö£ºÖ±ÏßËã·¨ Ñ¡Ôñ°´Å¥
+    QComboBox* clip_algorithmComboBox;	// ĞÂÔö£ºÖ±Ïß¶Î²Ã¼ôËã·¨ Ñ¡Ôñ°´Å¥
+    QSlider* widthSlider;           // ĞÂÔö£º¿ØÖÆÏßÌõ¿í¶È »¬¶¯Ìõ
+    QPushButton* colorButton;       // ĞÂÔö£ºÑÕÉ« Ñ¡Ôñ°´Å¥
+    QComboBox* lineTypeComboBox;    // ĞÂÔö£ºÏßĞÍ Ñ¡Ôñ°´Å¥
+    QComboBox* transModeComboBox;    // ĞÂÔö£ºÏßĞÍ Ñ¡Ôñ°´Å¥
+    QPushButton* clearButton;		// ĞÂÔö£ºÇå³ı°´Å¥
 
 public:
     MainWindow(QWidget* parent = nullptr) : QWidget(parent) {
-        shapeDrawer = new ShapeDrawer(this); // åˆ›å»ºç»˜å›¾åŒºåŸŸ
+        shapeDrawer = new ShapeDrawer(this); // ´´½¨»æÍ¼ÇøÓò
 
-        // åˆ›å»ºé€‰æ‹©ç»˜å›¾æ¨¡å¼çš„ç»„åˆæ¡†
+        // ´´½¨Ñ¡Ôñ»æÍ¼Ä£Ê½µÄ×éºÏ¿ò
         modeComboBox = new QComboBox(this);
         modeComboBox->addItem("Line", LineMode);
         modeComboBox->addItem("Circle", CircleMode);
@@ -1582,76 +1582,76 @@ public:
         modeComboBox->addItem("Bezier Curve", BezierMode);
         modeComboBox->addItem("Bspline Curve", BsplineMode);
 
-        // åˆ›å»ºä¸‹æ‹‰æ¡†å¹¶æ·»åŠ ç®—æ³•é€‰é¡¹
+        // ´´½¨ÏÂÀ­¿ò²¢Ìí¼ÓËã·¨Ñ¡Ïî
         line_algorithmComboBox = new QComboBox(this);
         line_algorithmComboBox->addItem("Midpoint", Midpoint);
         line_algorithmComboBox->addItem("Bresenham", Bresenham);
         line_algorithmComboBox->addItem("DDA", DDA);
         line_algorithmComboBox->addItem("DashLine", DashLine);
 
-        // åˆ›å»ºä¸‹æ‹‰æ¡†å¹¶æ·»åŠ è£å‰ªç®—æ³•é€‰é¡¹
+        // ´´½¨ÏÂÀ­¿ò²¢Ìí¼Ó²Ã¼ôËã·¨Ñ¡Ïî
         clip_algorithmComboBox = new QComboBox(this);
         clip_algorithmComboBox->addItem("Cohen-Sutherland", SutherlandTrim);
         clip_algorithmComboBox->addItem("Midpoint Trim", MidTrim);
         clip_algorithmComboBox->addItem("Trim Polygon", CropPolygon);
 
-        // åˆ›å»ºä¸‹æ‹‰æ¡†å¹¶æ·»åŠ å˜å½¢é€‰é¡¹
+        // ´´½¨ÏÂÀ­¿ò²¢Ìí¼Ó±äĞÎÑ¡Ïî
         transModeComboBox = new QComboBox(this);
         transModeComboBox->addItem("Move", MOVE);
         transModeComboBox->addItem("Zoom", ZOOM);
         transModeComboBox->addItem("Rotate", ROTATE);
 
-        // æ–°å¢ï¼šåˆ›å»ºæ»‘åŠ¨æ¡æ§åˆ¶çº¿æ¡å®½åº¦
+        // ĞÂÔö£º´´½¨»¬¶¯Ìõ¿ØÖÆÏßÌõ¿í¶È
         widthSlider = new QSlider(Qt::Horizontal, this);
-        widthSlider->setRange(1, 15);  // è®¾ç½®çº¿æ¡å®½åº¦èŒƒå›´ä¸º 1 åˆ° 15 åƒç´ 
-        widthSlider->setValue(5);      // åˆå§‹å€¼ä¸º 5 åƒç´ 
+        widthSlider->setRange(1, 15);  // ÉèÖÃÏßÌõ¿í¶È·¶Î§Îª 1 µ½ 15 ÏñËØ
+        widthSlider->setValue(5);      // ³õÊ¼ÖµÎª 5 ÏñËØ
 
-        // åˆ›å»ºé¢œè‰²é€‰æ‹©æŒ‰é’®
+        // ´´½¨ÑÕÉ«Ñ¡Ôñ°´Å¥
         colorButton = new QPushButton("Choose Painter Color", this);
 
-        // åˆ›å»ºæ¸…ç©ºç”»å¸ƒæŒ‰é’®
+        // ´´½¨Çå¿Õ»­²¼°´Å¥
         clearButton = new QPushButton("Clear", this);
 
-        // æ°´å¹³å¸ƒå±€ç®¡ç†å™¨ï¼ˆæ­¤å¤„æš‚æ—¶åªæœ‰å³ä¾§ï¼‰
+        // Ë®Æ½²¼¾Ö¹ÜÀíÆ÷£¨´Ë´¦ÔİÊ±Ö»ÓĞÓÒ²à£©
         QVBoxLayout* rightLayout = new QVBoxLayout();
         rightLayout->addWidget(new QLabel("Select Painting Mode:"));
-        rightLayout->addWidget(modeComboBox);       // æ–°å¢ï¼šç»˜åˆ¶æ¨¡å¼é€‰æ‹©
+        rightLayout->addWidget(modeComboBox);       // ĞÂÔö£º»æÖÆÄ£Ê½Ñ¡Ôñ
         rightLayout->addWidget(new QLabel("Select Line Mode:"));
-        rightLayout->addWidget(line_algorithmComboBox);  // æ–°å¢ï¼šç›´çº¿æ®µç®—æ³•é€‰æ‹©
+        rightLayout->addWidget(line_algorithmComboBox);  // ĞÂÔö£ºÖ±Ïß¶ÎËã·¨Ñ¡Ôñ
         rightLayout->addWidget(new QLabel("Select Clip Mode:"));
-        rightLayout->addWidget(clip_algorithmComboBox);  // æ–°å¢ï¼šç›´çº¿æ®µè£å‰ªç®—æ³•é€‰æ‹©
+        rightLayout->addWidget(clip_algorithmComboBox);  // ĞÂÔö£ºÖ±Ïß¶Î²Ã¼ôËã·¨Ñ¡Ôñ
         rightLayout->addWidget(new QLabel("Select Transform Mode:"));
-        rightLayout->addWidget(transModeComboBox);		// æ–°å¢ï¼šå›¾å½¢å˜æ¢æ¨¡å¼é€‰æ‹©
+        rightLayout->addWidget(transModeComboBox);		// ĞÂÔö£ºÍ¼ĞÎ±ä»»Ä£Ê½Ñ¡Ôñ
         rightLayout->addWidget(new QLabel("Select Line Width:"));
-        rightLayout->addWidget(widthSlider);        // æ–°å¢ï¼šå°†æ»‘åŠ¨æ¡æ·»åŠ åˆ°å³ä¾§å¸ƒå±€
-        rightLayout->addWidget(colorButton);        // æ–°å¢ï¼šå°†é¢œè‰²æŒ‰é’®æ·»åŠ åˆ°å¸ƒå±€
+        rightLayout->addWidget(widthSlider);        // ĞÂÔö£º½«»¬¶¯ÌõÌí¼Óµ½ÓÒ²à²¼¾Ö
+        rightLayout->addWidget(colorButton);        // ĞÂÔö£º½«ÑÕÉ«°´Å¥Ìí¼Óµ½²¼¾Ö
         rightLayout->addStretch();
         rightLayout->addWidget(clearButton);
 
-        // å‚ç›´å¸ƒå±€ç®¡ç†å™¨
+        // ´¹Ö±²¼¾Ö¹ÜÀíÆ÷
         QHBoxLayout* mainLayout = new QHBoxLayout(this);
         mainLayout->addWidget(shapeDrawer);
         mainLayout->addLayout(rightLayout);
 
-        // è¿æ¥ä¸‹æ‹‰æ¡†çš„é€‰æ‹©å˜åŒ–ä¿¡å·
+        // Á¬½ÓÏÂÀ­¿òµÄÑ¡Ôñ±ä»¯ĞÅºÅ
         connect(line_algorithmComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
             shapeDrawer->setAlgorithm(static_cast<line_Algorithm>(line_algorithmComboBox->currentData().toInt()));
         });
 
-        // è¿æ¥ä¸‹æ‹‰æ¡†çš„é€‰æ‹©å˜åŒ–ä¿¡å·
+        // Á¬½ÓÏÂÀ­¿òµÄÑ¡Ôñ±ä»¯ĞÅºÅ
         connect(clip_algorithmComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
             shapeDrawer->setclipAlgorithm(static_cast<clip_Algorithm>(clip_algorithmComboBox->currentData().toInt()));
         });
 
-        // è¿æ¥ä¸‹æ‹‰æ¡†çš„é€‰æ‹©å˜åŒ–ä¿¡å·
+        // Á¬½ÓÏÂÀ­¿òµÄÑ¡Ôñ±ä»¯ĞÅºÅ
         connect(transModeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
             shapeDrawer->setTransAlgorithm(static_cast<transMode>(transModeComboBox->currentData().toInt()));
         });
 
-        // è¿æ¥æ»‘åŠ¨æ¡çš„å€¼å˜åŒ–ä¿¡å·åˆ° shapeDrawer çš„ setLineWidth å‡½æ•°
+        // Á¬½Ó»¬¶¯ÌõµÄÖµ±ä»¯ĞÅºÅµ½ shapeDrawer µÄ setLineWidth º¯Êı
         connect(widthSlider, &QSlider::valueChanged, shapeDrawer, &ShapeDrawer::setLineWidth);
 
-        // è¿æ¥é¢œè‰²é€‰æ‹©æŒ‰é’®ï¼Œæ‰“å¼€é¢œè‰²é€‰æ‹©å™¨
+        // Á¬½ÓÑÕÉ«Ñ¡Ôñ°´Å¥£¬´ò¿ªÑÕÉ«Ñ¡ÔñÆ÷
         connect(colorButton, &QPushButton::clicked, [=]() {
             QColor color = QColorDialog::getColor(Qt::black, this, "Choose Line Color");
             if (color.isValid()) {
@@ -1659,19 +1659,19 @@ public:
             }
         });
 
-        // è¿æ¥ç»„åˆæ¡†çš„é€‰æ‹©å˜åŒ–ä¿¡å·
-        // å½“é€‰æ‹©æ¨¡å¼æ”¹å˜æ—¶è§¦å‘äº‹ä»¶
+        // Á¬½Ó×éºÏ¿òµÄÑ¡Ôñ±ä»¯ĞÅºÅ
+        // µ±Ñ¡ÔñÄ£Ê½¸Ä±äÊ±´¥·¢ÊÂ¼ş
         connect(modeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index) {
             DrawMode selectedMode = static_cast<DrawMode>(modeComboBox->itemData(index).toInt());
             shapeDrawer->setDrawMode(selectedMode);
             if (selectedMode == CircleMode) {
-                // å¼¹å‡ºå¯¹è¯æ¡†ï¼Œè¾“å…¥èµ·å§‹è§’åº¦å’Œç»“æŸè§’åº¦
+                // µ¯³ö¶Ô»°¿ò£¬ÊäÈëÆğÊ¼½Ç¶ÈºÍ½áÊø½Ç¶È
                 bool ok;
                 int startAngle = QInputDialog::getInt(this, tr("Set Start Angle"), tr("Enter start angle (degrees):"), 0, 0, 360, 1, &ok);
                 if (ok) {
                     int endAngle = QInputDialog::getInt(this, tr("Set End Angle"), tr("Enter end angle (degrees):"), 360, 0, 360, 1, &ok);
                     if (ok) {
-                        // è®¾ç½® ShapeDrawer ä¸­çš„èµ·å§‹è§’åº¦å’Œç»“æŸè§’åº¦
+                        // ÉèÖÃ ShapeDrawer ÖĞµÄÆğÊ¼½Ç¶ÈºÍ½áÊø½Ç¶È
                         shapeDrawer->setArcAngles(startAngle, endAngle);
                     }
                 }
@@ -1682,7 +1682,7 @@ public:
             DrawMode selectedMode = static_cast<DrawMode>(modeComboBox->itemData(index).toInt());
             shapeDrawer->setDrawMode(selectedMode);
             if (selectedMode == BsplineMode) {
-                // å¼¹å‡ºå¯¹è¯æ¡†ï¼Œè¾“å…¥è¦ç»˜åˆ¶çš„é˜¶æ•°
+                // µ¯³ö¶Ô»°¿ò£¬ÊäÈëÒª»æÖÆµÄ½×Êı
                 bool ok;
                 int k_step = QInputDialog::getInt(this, tr("Set Bspline steps"), tr("Enter steps:"), 3, 1, 10, 1, &ok);
                 if (ok)
@@ -1694,7 +1694,7 @@ public:
 
         setLayout(mainLayout);
         setWindowTitle("Drawing with Algorithms");
-        // ä¸»çª—å£å¤§å°â†“
+        // Ö÷´°¿Ú´óĞ¡¡ı
         setFixedSize(1000, 600);
     }
 };
