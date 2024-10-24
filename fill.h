@@ -3,13 +3,13 @@
 #include <QColor>
 #include "point.h"
 
-// Ìî³ä£¨ÖÖ×Óµã£©
+// å¡«å……ï¼ˆç§å­ç‚¹ï¼‰
 class Fill {
 public:
-	Point point; // ´¢´æÖÖ×Óµã
-	QColor color; // ´¢´æÌî³äÑÕÉ«
+    Point point; // å‚¨å­˜ç§å­ç‚¹
+    QColor color; // å‚¨å­˜å¡«å……é¢œè‰²
 
-	Fill(Point t_point, QColor t_color) :point(t_point), color(t_color) {}
-	Fill() :point(Point(10, 10)), color(Qt::black) {}
+    Fill(Point t_point, QColor t_color) :point(t_point), color(t_color) {}
+    Fill() :point(Point(10, 10)), color(Qt::black) {}
 };
 #endif // !FILL_H

@@ -4,78 +4,78 @@
 #include <QColor>
 #include "tools.h"
 
-// ½á¹¹ÌåÀ´´æ´¢Ã¿ÌõÏßµÄĞÅÏ¢£¬°üÀ¨Æğµã¡¢ÖÕµãºÍÏßÌõ¿í¶È
+// ç»“æ„ä½“æ¥å­˜å‚¨æ¯æ¡çº¿çš„ä¿¡æ¯ï¼ŒåŒ…æ‹¬èµ·ç‚¹ã€ç»ˆç‚¹å’Œçº¿æ¡å®½åº¦
 struct Line {
-	QLine line;
-	int width;
-	QColor colour;  // lyc:6
-	line_Algorithm alg;
-	// Qt::PenStyle penStyle; // ÏßĞÍ
+    QLine line;
+    int width;
+    QColor colour;  // lyc:6
+    line_Algorithm alg;
+    // Qt::PenStyle penStyle; // çº¿å‹
 
-	Line(QPoint p1, QPoint p2, int w, QColor c, line_Algorithm a) : line(p1, p2), width(w), colour(c), alg(a) {}
+    Line(QPoint p1, QPoint p2, int w, QColor c, line_Algorithm a) : line(p1, p2), width(w), colour(c), alg(a) {}
 };
-// »æÖÆÔ¤ÀÀÊµÏß(²»¸üĞÂMAP)
+// ç»˜åˆ¶é¢„è§ˆå®çº¿(ä¸æ›´æ–°MAP)
 void drawPreviewSolid(QPainter& painter, QPoint p1, QPoint p2)
 {
-	int x1 = p1.x();
-	int y1 = p1.y();
-	int x2 = p2.x();
-	int y2 = p2.y();
-	int dx = abs(x2 - x1);
-	int dy = abs(y2 - y1);
-	int sx = (x1 < x2) ? 1 : -1;
-	int sy = (y1 < y2) ? 1 : -1;
-	int err = dx - dy;
+    int x1 = p1.x();
+    int y1 = p1.y();
+    int x2 = p2.x();
+    int y2 = p2.y();
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
 
-	while (x1 != x2 || y1 != y2) {
-		painter.drawPoint(x1, y1);
-		int e2 = 2 * err;
-		if (e2 > -dy) {
-			err -= dy;
-			x1 += sx;
-		}
-		if (e2 < dx) {
-			err += dx;
-			y1 += sy;
-		}
-	}
+    while (x1 != x2 || y1 != y2) {
+        painter.drawPoint(x1, y1);
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
 }
 
-// »æÖÆÔ¤ÀÀĞéÏß(²»¸üĞÂMAP)
+// ç»˜åˆ¶é¢„è§ˆè™šçº¿(ä¸æ›´æ–°MAP)
 void drawPreviewDash(QPainter& painter, QPoint p1, QPoint p2)
 {
-	int x1 = p1.x();
-	int y1 = p1.y();
-	int x2 = p2.x();
-	int y2 = p2.y();
-	int dx = abs(x2 - x1);
-	int dy = abs(y2 - y1);
-	int sx = (x1 < x2) ? 1 : -1;
-	int sy = (y1 < y2) ? 1 : -1;
-	int err = dx - dy;
+    int x1 = p1.x();
+    int y1 = p1.y();
+    int x2 = p2.x();
+    int y2 = p2.y();
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
 
-	int dashLength = 8;   // Ã¿¶ÎĞéÏßµÄ³¤¶È
-	int gapLength = 8;    // Ã¿¶Î¿Õ°×µÄ³¤¶È
-	int totalLength = dashLength + gapLength;  // ×ÜÖÜÆÚ³¤¶È
-	int stepCount = 0;    // ¼ÆÊı²½Êı£¬ÓÃÓÚ¾ö¶¨ÊÇ·ñ»æÖÆ
+    int dashLength = 8;   // æ¯æ®µè™šçº¿çš„é•¿åº¦
+    int gapLength = 8;    // æ¯æ®µç©ºç™½çš„é•¿åº¦
+    int totalLength = dashLength + gapLength;  // æ€»å‘¨æœŸé•¿åº¦
+    int stepCount = 0;    // è®¡æ•°æ­¥æ•°ï¼Œç”¨äºå†³å®šæ˜¯å¦ç»˜åˆ¶
 
-	while (x1 != x2 || y1 != y2) {
-		// Ö»ÔÚĞéÏßµÄ²¿·Ö»æÖÆµã
-		if (stepCount % totalLength < dashLength) {
-			painter.drawPoint(x1, y1);
-		}
+    while (x1 != x2 || y1 != y2) {
+        // åªåœ¨è™šçº¿çš„éƒ¨åˆ†ç»˜åˆ¶ç‚¹
+        if (stepCount % totalLength < dashLength) {
+            painter.drawPoint(x1, y1);
+        }
 
-		int e2 = 2 * err;
-		if (e2 > -dy) {
-			err -= dy;
-			x1 += sx;
-		}
-		if (e2 < dx) {
-			err += dx;
-			y1 += sy;
-		}
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
 
-		stepCount++;  // Ôö¼Ó²½Êı¼ÆÊıÆ÷
-	}
+        stepCount++;  // å¢åŠ æ­¥æ•°è®¡æ•°å™¨
+    }
 }
 #endif // !LINE_H

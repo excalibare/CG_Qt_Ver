@@ -5,87 +5,87 @@
 #include <QPoint>
 using namespace std;
 
-// ÓÃÓÚSutherlandTrim
+// ç”¨äºSutherlandTrim
 enum OutCode {
-	INSIDE = 0, // 0000
-	LEFT = 1,   // 0001
-	RIGHT = 2,  // 0010
-	BOTTOM = 4, // 0100
-	TOP = 8     // 1000
+    INSIDE = 0, // 0000
+    LEFT = 1,   // 0001
+    RIGHT = 2,  // 0010
+    BOTTOM = 4, // 0100
+    TOP = 8     // 1000
 };
 
-// ¹¦ÄÜÀàĞÍ£ºÖ±Ïß¡¢Ô²»¡¡¢¶à±ßĞÎ¡¢Ìî³ä¡¢²Ã¼ô¡¢±ä»»¡¢ÇúÏß
+// åŠŸèƒ½ç±»å‹ï¼šç›´çº¿ã€åœ†å¼§ã€å¤šè¾¹å½¢ã€å¡«å……ã€è£å‰ªã€å˜æ¢ã€æ›²çº¿
 enum DrawMode {
-	LineMode,
-	ArcMode,
-	CircleMode,
-	PolygonMode,
-	FillMode,
-	TrimMode,
-	TransMode,
-	BezierMode,
-	BsplineMode,
+    LineMode,
+    ArcMode,
+    CircleMode,
+    PolygonMode,
+    FillMode,
+    TrimMode,
+    TransMode,
+    BezierMode,
+    BsplineMode,
 };
 
-// Ïß¶Î»æÖÆËã·¨
+// çº¿æ®µç»˜åˆ¶ç®—æ³•
 enum line_Algorithm {
-	DDA,
-	Bresenham,
-	Midpoint,
-	DashLine,
+    DDA,
+    Bresenham,
+    Midpoint,
+    DashLine,
 };
 
-// ²Ã¼ô¿ØÖÆËã·¨
+// è£å‰ªæ§åˆ¶ç®—æ³•
 enum clip_Algorithm {
-	SutherlandTrim,
-	MidTrim,
-	CropPolygon
+    SutherlandTrim,
+    MidTrim,
+    CropPolygon
 };
 
-// ±äĞÎÄ£Ê½
+// å˜å½¢æ¨¡å¼
 enum transMode {
-	MOVE,
-	ZOOM,
-	ROTATE,
-	BEZIER,
+    MOVE,
+    ZOOM,
+    ROTATE,
+    BEZIER,
 };
 
-// ÓÃÓÚÊµÏÖÌî³ä£¨ pointData Óë MAP £©
+// ç”¨äºå®ç°å¡«å……ï¼ˆ pointData ä¸ MAP ï¼‰
 class pointData {
 protected:
-	QPoint pos;
-	QColor color;
+    QPoint pos;
+    QColor color;
 public:
-	pointData(QPoint p, QColor c) {
-		pos = p;
-		color = c;
-	}
-	QColor getColor() {
-		return color;
-	}
-	void setColor(QColor c) {
-		color = c;
-	}
+    pointData(QPoint p, QColor c) {
+        pos = p;
+        color = c;
+    }
+    QColor getColor() {
+        return color;
+    }
+    void setColor(QColor c) {
+        color = c;
+    }
 };
 
 void initMAP(vector<vector<pointData>>& MAP) {
-	for (int i = 0; i < 1000; i++) {
-		vector<pointData> row;
-		MAP.push_back(row);
-		for (int j = 0; j < 1000; j++) {
-			//¶ÔÃ¿Ò»ĞĞÖĞµÄÃ¿Ò»ÁĞ½øĞĞÌí¼Óµã
-			pointData point(QPoint(i, j), Qt::white);
-			MAP[i].push_back(point);
-		}
-	}
+    for (int i = 0; i < 1000; i++) {
+        vector<pointData> row;
+        MAP.push_back(row);
+        for (int j = 0; j < 1000; j++) {
+            //å¯¹æ¯ä¸€è¡Œä¸­çš„æ¯ä¸€åˆ—è¿›è¡Œæ·»åŠ ç‚¹
+            pointData point(QPoint(i, j), Qt::white);
+            MAP[i].push_back(point);
+        }
+    }
 }
 
 void clearMAP(vector<vector<pointData>>& MAP) {
-	for (int i = 0; i < 800; i++) {
-		for (int j = 0; j < 550; j++) {
-			MAP[i][j].setColor(Qt::white);
-		}
-	}
+    for (int i = 0; i < 800; i++) {
+        for (int j = 0; j < 550; j++) {
+            MAP[i][j].setColor(Qt::white);
+        }
+    }
 }
 
 #endif // !TOOLS_H

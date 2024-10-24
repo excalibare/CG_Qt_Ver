@@ -3,123 +3,123 @@
 #include<QPoint>
 #include"point.h"
 
-// ±ä»»¾ØÕó
+// å˜æ¢çŸ©é˜µ
 class transMatrix {
 private:
-	int reference_x = 0, reference_y = 0;   //²Î¿¼µã
-	double tr[3][3] = { 1,0,0,
-					  0,1,0,   //±ä»»¾ØÕó
-					  0,0,1 };
+    int reference_x = 0, reference_y = 0;   //å‚è€ƒç‚¹
+    double tr[3][3] = { 1,0,0,
+                      0,1,0,   //å˜æ¢çŸ©é˜µ
+                      0,0,1 };
 
 public:
-	/**¹¹ÔìÓë³õÊ¼»¯º¯Êı**/
-	transMatrix(int refer_X = 0, int refer_Y = 0) {  //ÒÔ²Î¿¼µãxy¹¹Ôì£¬Ä¬ÈÏ¶¼Îª0
-		reference_x = refer_X;
-		reference_y = refer_Y;
-	}
-	transMatrix(Point q) {   //¼æÈİÓÃPointÖ±½Ó×÷Îª²Î¿¼µã¹¹Ôì£¬±ãÓÚ³ÌĞòÖĞÓëÊó±ê½»»¥
-		reference_x = q.x;
-		reference_y = q.y;
-	}
-	void setReference(int refer_X = 0, int refer_Y = 0) {  //ÒÔxy×÷Îª²ÎÊıÖØĞÂÉèÖÃ²Î¿¼µã
-		reference_x = refer_X;
-		reference_y = refer_Y;
-	}
-	void setReference(Point q) {   //ÒÔPointÉèÖÃ²Î¿¼µã
-		reference_x = q.x;
-		reference_y = q.y;
-	}
+    /**æ„é€ ä¸åˆå§‹åŒ–å‡½æ•°**/
+    transMatrix(int refer_X = 0, int refer_Y = 0) {  //ä»¥å‚è€ƒç‚¹xyæ„é€ ï¼Œé»˜è®¤éƒ½ä¸º0
+        reference_x = refer_X;
+        reference_y = refer_Y;
+    }
+    transMatrix(Point q) {   //å…¼å®¹ç”¨Pointç›´æ¥ä½œä¸ºå‚è€ƒç‚¹æ„é€ ï¼Œä¾¿äºç¨‹åºä¸­ä¸é¼ æ ‡äº¤äº’
+        reference_x = q.x;
+        reference_y = q.y;
+    }
+    void setReference(int refer_X = 0, int refer_Y = 0) {  //ä»¥xyä½œä¸ºå‚æ•°é‡æ–°è®¾ç½®å‚è€ƒç‚¹
+        reference_x = refer_X;
+        reference_y = refer_Y;
+    }
+    void setReference(Point q) {   //ä»¥Pointè®¾ç½®å‚è€ƒç‚¹
+        reference_x = q.x;
+        reference_y = q.y;
+    }
 
-	/**¹¦ÄÜº¯Êı**/
-	void Reset() {   //½«¾ØÕóÖØÖÃÎªÃ»ÓĞÈÎºÎ±ä»»Ğ§¹ûµÄ³õÖµ
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				if (i != j)
-					tr[i][j] = 0;
-				else
-					tr[i][j] = 1;
-			}
-		}
-	}
+    /**åŠŸèƒ½å‡½æ•°**/
+    void Reset() {   //å°†çŸ©é˜µé‡ç½®ä¸ºæ²¡æœ‰ä»»ä½•å˜æ¢æ•ˆæœçš„åˆå€¼
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                if (i != j)
+                    tr[i][j] = 0;
+                else
+                    tr[i][j] = 1;
+            }
+        }
+    }
 
-	void setRotateTrans(double angle) {   //ÉèÖÃĞı×ª¹¦ÄÜ£¬µ÷ÓÃ¸Ãº¯Êı´«ÈëÒ»¸ö½Ç¶ÈÖµ£¬×Ô¶¯½«¾ØÕóÉèÖÃÎª¶ÔÓ¦µÄ±ä»»¾ØÕó£¬²¢¸²¸ÇÔ­ÄÚÈİ
-		Reset();
-		angle = angle * 3.1415926 / 180;      //½Ç¶È×ª»¡¶È
-		tr[0][0] = cos(angle);
-		tr[0][1] = -sin(angle);
-		tr[1][0] = -tr[0][1];
-		tr[1][1] = tr[0][0];
-	}
+    void setRotateTrans(double angle) {   //è®¾ç½®æ—‹è½¬åŠŸèƒ½ï¼Œè°ƒç”¨è¯¥å‡½æ•°ä¼ å…¥ä¸€ä¸ªè§’åº¦å€¼ï¼Œè‡ªåŠ¨å°†çŸ©é˜µè®¾ç½®ä¸ºå¯¹åº”çš„å˜æ¢çŸ©é˜µï¼Œå¹¶è¦†ç›–åŸå†…å®¹
+        Reset();
+        angle = angle * 3.1415926 / 180;      //è§’åº¦è½¬å¼§åº¦
+        tr[0][0] = cos(angle);
+        tr[0][1] = -sin(angle);
+        tr[1][0] = -tr[0][1];
+        tr[1][1] = tr[0][0];
+    }
 
-	void setZoomTrans(double z_X, double z_Y) {   //ÉèÖÃËõ·Å¹¦ÄÜ£¬ÓëÉèÖÃĞı×ªÀàËÆ£¬²ÎÊıÎªxÓëy·½ÏòµÄËõ·Å±ÈÀı
-		Reset();
-		tr[0][0] = z_X;
-		tr[1][1] = z_Y;
-	}
+    void setZoomTrans(double z_X, double z_Y) {   //è®¾ç½®ç¼©æ”¾åŠŸèƒ½ï¼Œä¸è®¾ç½®æ—‹è½¬ç±»ä¼¼ï¼Œå‚æ•°ä¸ºxä¸yæ–¹å‘çš„ç¼©æ”¾æ¯”ä¾‹
+        Reset();
+        tr[0][0] = z_X;
+        tr[1][1] = z_Y;
+    }
 
-	void setMoveTrans(double m_X, double m_Y) {   //ÉèÖÃÒÆ¶¯¹¦ÄÜ£¬ÓëÉèÖÃĞı×ªÀàËÆ£¬²ÎÊıÎªxÓëy·½ÏòµÄÒÆ¶¯¾àÀë
-		Reset();
-		tr[0][2] = m_X;
-		tr[1][2] = m_Y;
-	}
-	void setMoveTrans(Point movevec) {   //ÉèÖÃÒÆ¶¯¹¦ÄÜÖØÔØ£¬Ê¹ÓÃÒ»¸öpoint×÷ÎªÏòÁ¿ĞŞ¸ÄÒÆ¶¯¾àÀë
-		Reset();
-		tr[0][2] = movevec.Getx();
-		tr[1][2] = movevec.Gety();
-	}
-	void setMoveTrans(QPoint movevec) {   //ÉèÖÃÒÆ¶¯¹¦ÄÜÖØÔØ£¬Ê¹ÓÃÒ»¸öQpoint×÷ÎªÏòÁ¿ĞŞ¸ÄÒÆ¶¯¾àÀë
-		Reset();
-		tr[0][2] = movevec.x();
-		tr[1][2] = movevec.y();
-	}
+    void setMoveTrans(double m_X, double m_Y) {   //è®¾ç½®ç§»åŠ¨åŠŸèƒ½ï¼Œä¸è®¾ç½®æ—‹è½¬ç±»ä¼¼ï¼Œå‚æ•°ä¸ºxä¸yæ–¹å‘çš„ç§»åŠ¨è·ç¦»
+        Reset();
+        tr[0][2] = m_X;
+        tr[1][2] = m_Y;
+    }
+    void setMoveTrans(Point movevec) {   //è®¾ç½®ç§»åŠ¨åŠŸèƒ½é‡è½½ï¼Œä½¿ç”¨ä¸€ä¸ªpointä½œä¸ºå‘é‡ä¿®æ”¹ç§»åŠ¨è·ç¦»
+        Reset();
+        tr[0][2] = movevec.Getx();
+        tr[1][2] = movevec.Gety();
+    }
+    void setMoveTrans(QPoint movevec) {   //è®¾ç½®ç§»åŠ¨åŠŸèƒ½é‡è½½ï¼Œä½¿ç”¨ä¸€ä¸ªQpointä½œä¸ºå‘é‡ä¿®æ”¹ç§»åŠ¨è·ç¦»
+        Reset();
+        tr[0][2] = movevec.x();
+        tr[1][2] = movevec.y();
+    }
 
-	/**ÔËËã·ûÖØÔØ**/
-	double* operator[](int index) {    //ÏÂ±ê·ûÖØÔØ£¬µ÷ÓÃÒ»´Î·µ»ØÒ»¸öĞĞÖ¸Õë£¬ĞèÒªÔÙÊ¹ÓÃÒ»´ÎÏÂ±ê·ûÈ¡³öÖ¸¶¨Î»ÖÃ¾ØÕó£¬Ê¹ÓÃÉÏºÍÆÕÍ¨¶şÎ¬Êı×éÒ»ÖÂ¡£
-		return this->tr[index];
-	}
+    /**è¿ç®—ç¬¦é‡è½½**/
+    double* operator[](int index) {    //ä¸‹æ ‡ç¬¦é‡è½½ï¼Œè°ƒç”¨ä¸€æ¬¡è¿”å›ä¸€ä¸ªè¡ŒæŒ‡é’ˆï¼Œéœ€è¦å†ä½¿ç”¨ä¸€æ¬¡ä¸‹æ ‡ç¬¦å–å‡ºæŒ‡å®šä½ç½®çŸ©é˜µï¼Œä½¿ç”¨ä¸Šå’Œæ™®é€šäºŒç»´æ•°ç»„ä¸€è‡´ã€‚
+        return this->tr[index];
+    }
 
-	Point operator*(Point q) {       //µ±ÓÒ³ËÒ»¸öPointÀàÊ±£¬¶¨ÒåÎªÊ©¼Ó±ä»»£¬·µ»ØÒ»¸ö±ä»»ºóµÄQPoint
-		float QMatrix[3] = { (float)-reference_x,(float)-reference_y,1 };//×¼±¸µãµÄÏòÁ¿
-		float QTransed[3] = { (float)reference_x,(float)reference_y,0 };//×¼±¸¼ÆËãÍêºóµÄµãÏòÁ¿
-		QMatrix[0] += q.x;          //ÕâÀïÊÇ¼Ó¶ø²»ÊÇ¸³Öµ£¬°üÀ¨ÉÏÎÄ×¼±¸µãÏòÁ¿Ê±ÌîÈëÁË²Î¿¼µãÏà¹ØÊı¾İ
-		QMatrix[1] += q.y;          //ÕâÑù×öÊÇÎªÁËÂú×ã¸ù¾İÄ³¸ö²Î¿¼µã½øĞĞ·ÅËõºÍĞı×ª£¬·ÇÔ­µã×ö²Î¿¼µãĞèÒª½øĞĞÁ½´ÎÒÆ¶¯±ä»»£¬¶øÕâ¿ÉÒÔÖ±½ÓÌåÏÖÔÚ¼Ó·¨ÉÏ
-		float sum = 0;                //Òò´ËÕıºÃ¿ÉÒÔÓÃÏò³õÊ¼Óë×îÖÕµãÏòÁ¿ÖĞÔ¤ÉèÒÆ¶¯±ä»»µÄ·½Ê½¼ò»¯Ö¸¶¨²Î¿¼µã±ä»»¡£
-		for (int i = 0; i < 3; ++i) { //¾ØÕó³Ë·¨
-			sum = 0;
-			for (int j = 0; j < 3; ++j) {
-				sum += this->tr[i][j] * QMatrix[j];
-			}
-			QTransed[i] += sum;
-		}
-		q.rx() = (int)QTransed[0] + 0.5;//½«µÃµ½µÄ½á¹ûÈ¡³ö£¬È¡Õû£¬ĞŞ¸ÄQPoint²¢·µ»Ø
-		q.ry() = (int)QTransed[1] + 0.5;
-		return q;
-	}
+    Point operator*(Point q) {       //å½“å³ä¹˜ä¸€ä¸ªPointç±»æ—¶ï¼Œå®šä¹‰ä¸ºæ–½åŠ å˜æ¢ï¼Œè¿”å›ä¸€ä¸ªå˜æ¢åçš„QPoint
+        float QMatrix[3] = { (float)-reference_x,(float)-reference_y,1 };//å‡†å¤‡ç‚¹çš„å‘é‡
+        float QTransed[3] = { (float)reference_x,(float)reference_y,0 };//å‡†å¤‡è®¡ç®—å®Œåçš„ç‚¹å‘é‡
+        QMatrix[0] += q.x;          //è¿™é‡Œæ˜¯åŠ è€Œä¸æ˜¯èµ‹å€¼ï¼ŒåŒ…æ‹¬ä¸Šæ–‡å‡†å¤‡ç‚¹å‘é‡æ—¶å¡«å…¥äº†å‚è€ƒç‚¹ç›¸å…³æ•°æ®
+        QMatrix[1] += q.y;          //è¿™æ ·åšæ˜¯ä¸ºäº†æ»¡è¶³æ ¹æ®æŸä¸ªå‚è€ƒç‚¹è¿›è¡Œæ”¾ç¼©å’Œæ—‹è½¬ï¼ŒéåŸç‚¹åšå‚è€ƒç‚¹éœ€è¦è¿›è¡Œä¸¤æ¬¡ç§»åŠ¨å˜æ¢ï¼Œè€Œè¿™å¯ä»¥ç›´æ¥ä½“ç°åœ¨åŠ æ³•ä¸Š
+        float sum = 0;                //å› æ­¤æ­£å¥½å¯ä»¥ç”¨å‘åˆå§‹ä¸æœ€ç»ˆç‚¹å‘é‡ä¸­é¢„è®¾ç§»åŠ¨å˜æ¢çš„æ–¹å¼ç®€åŒ–æŒ‡å®šå‚è€ƒç‚¹å˜æ¢ã€‚
+        for (int i = 0; i < 3; ++i) { //çŸ©é˜µä¹˜æ³•
+            sum = 0;
+            for (int j = 0; j < 3; ++j) {
+                sum += this->tr[i][j] * QMatrix[j];
+            }
+            QTransed[i] += sum;
+        }
+        q.rx() = (int)QTransed[0] + 0.5;//å°†å¾—åˆ°çš„ç»“æœå–å‡ºï¼Œå–æ•´ï¼Œä¿®æ”¹QPointå¹¶è¿”å›
+        q.ry() = (int)QTransed[1] + 0.5;
+        return q;
+    }
 
-	transMatrix operator*(transMatrix t) {  //µ±ÓÒ³ËÍ¬Àà¾ØÕóÊ±£¬½øĞĞÆÕÍ¨¾ØÕó³Ë·¨£¬µ«Òª¿¼ÂÇÍ³Ò»²Î¿¼µã
-		float sum = 0;
-		bool differRefer = false;
-		transMatrix temp(t.reference_x, t.reference_y);//½«×îÖÕ·µ»ØµÄÀàÖĞÌîÈëÓÒ²à±ä»»¾ØÕóµÄ²Î¿¼µã£¬ÒòÎªÓÒ²à¾ØÕó¿ÉÄÜ×îÖÕÓëµãÀàÏà³Ë
-		if (t.reference_y != reference_y || t.reference_x != reference_x) {   //Èç¹û²Î¿¼µã²»Í¬£¬ĞèÒª×ö²Î¿¼µãÍ³Ò»
-			differRefer = true;
-			t.tr[0][2] -= reference_x;   //½øĞĞÒÆ¶¯±ä»» Ïàµ±ÓÚÔ­ÏÈ¾ØÕóÓëµãÏà³ËÊ±£¬²ÎÕÕµãÔÚ³Ë·¨ÖĞ±»´¦Àí£¬¶ø´Ë´¦Ã»ÓĞÖ±½ÓÓëµãÏà³Ë
-			t.tr[1][2] -= reference_y;   //Òò´Ë²Î¿¼¾ØÕó³Ë·¨½áºÏÂÉ¶¨Òå,ÏÈ¶ÔÓÒ¾ØÕó³ËÒÆ¶¯¾ØÕó£¬ÔÙ¶Ô¼ÆËã½á¹û³ËÒÆ¶¯¾ØÕó¡£ÕâÀïÖ±½Ó¼ò»¯Îª¶ÔÓ¦Î»ÖÃ¼Ó·¨¡£
-		}
-		for (int i = 0; i < 3; ++i) {  //ÆÕÍ¨¾ØÕóÔËËã
-			for (int j = 0; j < 3; ++j) {
-				sum = 0;
-				for (int k = 0; k < 3; ++k) {
-					sum += this->tr[i][k] * t.tr[k][j];
-				}
-				temp[i][j] = sum;
-			}
-		}
-		if (differRefer) {  //½øĞĞÒÆ¶¯±ä»»
-			temp.tr[0][2] += reference_x;
-			temp.tr[1][2] += reference_y;
-		}
-		return temp;
-	}
+    transMatrix operator*(transMatrix t) {  //å½“å³ä¹˜åŒç±»çŸ©é˜µæ—¶ï¼Œè¿›è¡Œæ™®é€šçŸ©é˜µä¹˜æ³•ï¼Œä½†è¦è€ƒè™‘ç»Ÿä¸€å‚è€ƒç‚¹
+        float sum = 0;
+        bool differRefer = false;
+        transMatrix temp(t.reference_x, t.reference_y);//å°†æœ€ç»ˆè¿”å›çš„ç±»ä¸­å¡«å…¥å³ä¾§å˜æ¢çŸ©é˜µçš„å‚è€ƒç‚¹ï¼Œå› ä¸ºå³ä¾§çŸ©é˜µå¯èƒ½æœ€ç»ˆä¸ç‚¹ç±»ç›¸ä¹˜
+        if (t.reference_y != reference_y || t.reference_x != reference_x) {   //å¦‚æœå‚è€ƒç‚¹ä¸åŒï¼Œéœ€è¦åšå‚è€ƒç‚¹ç»Ÿä¸€
+            differRefer = true;
+            t.tr[0][2] -= reference_x;   //è¿›è¡Œç§»åŠ¨å˜æ¢ ç›¸å½“äºåŸå…ˆçŸ©é˜µä¸ç‚¹ç›¸ä¹˜æ—¶ï¼Œå‚ç…§ç‚¹åœ¨ä¹˜æ³•ä¸­è¢«å¤„ç†ï¼Œè€Œæ­¤å¤„æ²¡æœ‰ç›´æ¥ä¸ç‚¹ç›¸ä¹˜
+            t.tr[1][2] -= reference_y;   //å› æ­¤å‚è€ƒçŸ©é˜µä¹˜æ³•ç»“åˆå¾‹å®šä¹‰,å…ˆå¯¹å³çŸ©é˜µä¹˜ç§»åŠ¨çŸ©é˜µï¼Œå†å¯¹è®¡ç®—ç»“æœä¹˜ç§»åŠ¨çŸ©é˜µã€‚è¿™é‡Œç›´æ¥ç®€åŒ–ä¸ºå¯¹åº”ä½ç½®åŠ æ³•ã€‚
+        }
+        for (int i = 0; i < 3; ++i) {  //æ™®é€šçŸ©é˜µè¿ç®—
+            for (int j = 0; j < 3; ++j) {
+                sum = 0;
+                for (int k = 0; k < 3; ++k) {
+                    sum += this->tr[i][k] * t.tr[k][j];
+                }
+                temp[i][j] = sum;
+            }
+        }
+        if (differRefer) {  //è¿›è¡Œç§»åŠ¨å˜æ¢
+            temp.tr[0][2] += reference_x;
+            temp.tr[1][2] += reference_y;
+        }
+        return temp;
+    }
 };
 
 #endif // !TRANSMATRIX_H

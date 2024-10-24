@@ -7,5 +7,5 @@
 4. 创建完成后，另外新建一个文件夹，将[excalibare/CG_Qt_Ver](https://github.com/excalibare/CG_Qt_Ver)的code保存至本地，可以手动下载，不过个人推荐使用SourseTree（git图形化界面，百度即可获取）克隆
 5. 将其中[excalibare/CG_Qt_Ver](https://github.com/excalibare/CG_Qt_Ver)的所有代码拷贝至QtCreater创建的项目中（会替换掉原有的三个文件）
 6. 此时应该可以在QtCreater中运行，之后使用你喜欢的方法管理QtCreater创建项目的那个文件夹即可
-7. 文件编码请选择GBK
+7. 文件编码请选择UTF-8，打开项目时请选择对应的CMakes.txt打开
 

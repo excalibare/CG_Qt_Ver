@@ -1,54 +1,54 @@
 #ifndef POINT_H
 #define POINT_H
 
-// ½á¹¹ÌåÀ´´æ´¢Ã¿¸öµãµÄÐÅÏ¢£¬Îª¶à±ßÐÎ»æÖÆ·þÎñ
+// ç»“æž„ä½“æ¥å­˜å‚¨æ¯ä¸ªç‚¹çš„ä¿¡æ¯ï¼Œä¸ºå¤šè¾¹å½¢ç»˜åˆ¶æœåŠ¡
 struct Point {
 public:
-	int x, y;
-	Point(int x = 0, int y = 0) : x(x), y(y) {}
-	Point(QPoint p) : x(p.x()), y(p.y()) {}
+    int x, y;
+    Point(int x = 0, int y = 0) : x(x), y(y) {}
+    Point(QPoint p) : x(p.x()), y(p.y()) {}
 
-	int Getx() {
-		return x;
-	}
-	int Gety() {
-		return y;
-	}
+    int Getx() {
+        return x;
+    }
+    int Gety() {
+        return y;
+    }
 
-	constexpr inline int& rx() noexcept
-	{
-		return x;
-	}
+    constexpr inline int& rx() noexcept
+    {
+        return x;
+    }
 
-	constexpr inline int& ry() noexcept
-	{
-		return y;
-	}
+    constexpr inline int& ry() noexcept
+    {
+        return y;
+    }
 
-	// ÖØÔØ£¬Ö§³ÖÏà¼õ
-	Point operator-(const Point& b) {
-		Point ret;
-		ret.x = this->x - b.x;
-		ret.y = this->y - b.y;
-		return ret;
-	}
+    // é‡è½½ï¼Œæ”¯æŒç›¸å‡
+    Point operator-(const Point& b) {
+        Point ret;
+        ret.x = this->x - b.x;
+        ret.y = this->y - b.y;
+        return ret;
+    }
 
-	// ÖØÔØ£¬Ö§³ÖÏà¼Ó
-	Point operator+(const Point& b) {
-		Point ret;
-		ret.x = this->x + b.x;
-		ret.y = this->y + b.y;
-		return ret;
-	}
+    // é‡è½½ï¼Œæ”¯æŒç›¸åŠ 
+    Point operator+(const Point& b) {
+        Point ret;
+        ret.x = this->x + b.x;
+        ret.y = this->y + b.y;
+        return ret;
+    }
 };
 
-// ÓÃÓÚÊµÏÖBezier£¬Ôö¹ãµ½ÁËdouble¾«¶È
+// ç”¨äºŽå®žçŽ°Bezierï¼Œå¢žå¹¿åˆ°äº†doubleç²¾åº¦
 class point2d {
 public:
-	double x, y;
-	point2d() {}
-	point2d(double X, double Y) :x(X), y(Y) {}
-	void seX(double X) { x = X; }
-	void seY(double Y) { x = Y; }
+    double x, y;
+    point2d() {}
+    point2d(double X, double Y) :x(X), y(Y) {}
+    void seX(double X) { x = X; }
+    void seY(double Y) { x = Y; }
 };
 #endif // !POINT_H

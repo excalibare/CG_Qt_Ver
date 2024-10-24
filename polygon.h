@@ -6,100 +6,100 @@
 #include "point.h"
 using namespace std;
 
-// ½«PointÀàĞÍµÄµã×ª»»ÎªQPoint
+// å°†Pointç±»å‹çš„ç‚¹è½¬æ¢ä¸ºQPoint
 QPoint P2QP(Point p) {
-	QPoint res;
-	res.setX(p.x);
-	res.setY(p.y);
-	return res;
+    QPoint res;
+    res.setX(p.x);
+    res.setY(p.y);
+    return res;
 }
 
-// ½«PointÀàĞÍµÄµã×ª»»ÎªQPoint
+// å°†Pointç±»å‹çš„ç‚¹è½¬æ¢ä¸ºQPoint
 Point QP2P(QPoint p) {
-	Point res;
-	res.x = p.x();
-	res.y = p.y();
-	return res;
+    Point res;
+    res.x = p.x();
+    res.y = p.y();
+    return res;
 }
 
-// ½á¹¹ÌåÀ´´æ´¢¶à±ßĞÎÃ¿¸ö±ßµÄĞÅÏ¢£¬Îª¶à±ßĞÎ»æÖÆ·şÎñ
+// ç»“æ„ä½“æ¥å­˜å‚¨å¤šè¾¹å½¢æ¯ä¸ªè¾¹çš„ä¿¡æ¯ï¼Œä¸ºå¤šè¾¹å½¢ç»˜åˆ¶æœåŠ¡
 struct Edge {
-	int yMax;
-	float xMin, slopeReciprocal;
+    int yMax;
+    float xMin, slopeReciprocal;
 };
 
-// ¶à±ßĞÎ
+// å¤šè¾¹å½¢
 class Polygon {
 public:
-	vector<Point> points; // ´¢´æ¶à±ßĞÎµÄ¶¥µã
-	QColor color;
-	Polygon() {}
+    vector<Point> points; // å‚¨å­˜å¤šè¾¹å½¢çš„é¡¶ç‚¹
+    QColor color;
+    Polygon() {}
 
-	void addPoint(const Point& point) {
-		points.push_back(point);
-	}
+    void addPoint(const Point& point) {
+        points.push_back(point);
+    }
 
-	void addPoint(const Polygon& polygon) {
-		for (int i = 0; i < polygon.points.size(); ++i) {
-			points.push_back(polygon.points[i]);
-		}
-	}
+    void addPoint(const Polygon& polygon) {
+        for (int i = 0; i < polygon.points.size(); ++i) {
+            points.push_back(polygon.points[i]);
+        }
+    }
 
-	bool isClosed() const {
-		return points.size() > 2 && points.front().x == points.back().x && points.front().y == points.back().y;
-	}
+    bool isClosed() const {
+        return points.size() > 2 && points.front().x == points.back().x && points.front().y == points.back().y;
+    }
 
-	void closePolygon() {
-		if (points.size() > 2 && !isClosed()) {
-			points.push_back(points.front()); // ·â±Õ¶à±ßĞÎ
-		}
-	}
+    void closePolygon() {
+        if (points.size() > 2 && !isClosed()) {
+            points.push_back(points.front()); // å°é—­å¤šè¾¹å½¢
+        }
+    }
 
-	Polygon operator=(const Polygon& poly) {
-		this->points = poly.points;
-		this->color = poly.color;
-		return *this;
-	}
+    Polygon operator=(const Polygon& poly) {
+        this->points = poly.points;
+        this->color = poly.color;
+        return *this;
+    }
 
-	int length() {
-		return points.size();
-	}
+    int length() {
+        return points.size();
+    }
 
-	void clear() {
-		vector<Point> tem;
-		points = tem;
-		color = Qt::black;
-	}
+    void clear() {
+        vector<Point> tem;
+        points = tem;
+        color = Qt::black;
+    }
 
-	void remove(int i) {
-		points.erase(points.begin() + i);
-	}
+    void remove(int i) {
+        points.erase(points.begin() + i);
+    }
 
-	void print() {
-		qDebug() << "The shape is: ";
-		for (int j = 0; j < points.size(); ++j) {
-			qDebug() << points[j].Getx() << " & " << points[j].Gety() << " || ";
-		}
-		qDebug() << "\n";
-	}
+    void print() {
+        qDebug() << "The shape is: ";
+        for (int j = 0; j < points.size(); ++j) {
+            qDebug() << points[j].Getx() << " & " << points[j].Gety() << " || ";
+        }
+        qDebug() << "\n";
+    }
 };
 
-// ½«×Ô¶¨ÒåPolygonÀàĞÍµÄPolygon×ªÎªQVector(QPoint)
+// å°†è‡ªå®šä¹‰Polygonç±»å‹çš„Polygonè½¬ä¸ºQVector(QPoint)
 QVector<QPoint> P2QV(Polygon p) {
-	QVector<QPoint> res;
-	for (int i = 0; i < p.points.size() - 1; i++) {
-		res.push_back(P2QP(p.points[i]));
-	}
-	return res;
+    QVector<QPoint> res;
+    for (int i = 0; i < p.points.size() - 1; i++) {
+        res.push_back(P2QP(p.points[i]));
+    }
+    return res;
 }
 
-// ½«QVector(QPoint)×ªÎª×Ô¶¨ÒåPolygonÀàĞÍµÄPolygon
+// å°†QVector(QPoint)è½¬ä¸ºè‡ªå®šä¹‰Polygonç±»å‹çš„Polygon
 Polygon QV2P(QVector<QPoint> q) {
-	Polygon res;
-	for (int i = 0; i < q.size(); i++) {
-		res.points.push_back(QP2P(q[i]));
-	}
-	res.points.push_back(res.points[0]);
-	return res;
+    Polygon res;
+    for (int i = 0; i < q.size(); i++) {
+        res.points.push_back(QP2P(q[i]));
+    }
+    res.points.push_back(res.points[0]);
+    return res;
 }
 #endif // !POLYGON_H

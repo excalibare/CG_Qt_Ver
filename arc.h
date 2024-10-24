@@ -3,16 +3,16 @@
 #include<QPoint>
 #include<QColor>
 
-// 结构体来存储每条圆弧的信息，包括圆心、半径、起始角和结束角
+// 缁撴瀯浣撴潵瀛樺偍姣忔潯鍦嗗姬鐨勪俊鎭紝鍖呮嫭鍦嗗績銆佸崐寰勩�佽捣濮嬭鍜岀粨鏉熻
 struct Arc {
-	QPoint center;  // 圆心
-	int radius;     // 半径
-	int startAngle; // 起始角度
-	int endAngle;   // 终止角度
-	int width;
-	QColor colour;
-	// Qt::PenStyle penStyle; // 线型
+    QPoint center;  // 鍦嗗績
+    int radius;     // 鍗婂緞
+    int startAngle; // 璧峰瑙掑害
+    int endAngle;   // 缁堟瑙掑害
+    int width;
+    QColor colour;
+    // Qt::PenStyle penStyle; // 绾垮瀷
 
-	Arc(QPoint p, int r, int sa, int ea, int w, QColor c) :center(p), radius(r), startAngle(sa), endAngle(ea), width(w), colour(c) {}
+    Arc(QPoint p, int r, int sa, int ea, int w, QColor c) :center(p), radius(r), startAngle(sa), endAngle(ea), width(w), colour(c) {}
 };
 #endif // !ARC_H
