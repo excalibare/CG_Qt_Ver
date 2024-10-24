@@ -1,6 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <QPoint>
+
 // 结构体来存储每个点的信息，为多边形绘制服务
 struct Point {
 public:

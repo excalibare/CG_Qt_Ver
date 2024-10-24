@@ -2,6 +2,7 @@
 #define LINE_H
 #include <QLine>
 #include <QColor>
+#include <QPainter>
 #include "tools.h"
 
 // 结构体来存储每条线的信息，包括起点、终点和线条宽度
