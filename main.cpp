@@ -13,10 +13,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ShapeDrawer *myshapedrawer = ui->widget;
+    // 顶部工具栏
+    QToolBar* tbar = ui->toolBar;
+    tbar->setMovable(false);//工具栏不可移动
+    tbar->setStyleSheet("background-color:rgb(243, 249, 255);");//背景色
+
     QPushButton *clearButton = ui->Clear;
     clearButton->setText("Clear");
     QPushButton *colorButton = ui->Color;
     colorButton->setText("SetColor");
+
+    QAction* solidarrowAction = ui->SolidArrow;
+    QAction* dashedarrowAction = ui->DashedArrow;
 
     // 连接选择变化信号(槽函数)
 
@@ -28,6 +36,15 @@ MainWindow::MainWindow(QWidget *parent)
         if (color.isValid()) {
             myshapedrawer->setCurrentLineColor(color);
         }
+    });
+
+    // 连接实线箭头动作
+    connect(solidarrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(SolidArrow); // 设置为SolidArrow模式
+    });
+    // 连接虚线箭头动作
+    connect(dashedarrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(DashedArrow); // 设置为DashedArrow模式
     });
 }
 

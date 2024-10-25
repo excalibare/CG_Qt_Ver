@@ -25,6 +25,8 @@ enum DrawMode {
     TransMode,
     BezierMode,
     BsplineMode,
+    SolidArrow,
+    DashedArrow,
 };
 
 // 线段绘制算法
