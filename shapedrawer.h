@@ -52,7 +52,7 @@ private:
     QStack<Point> stack;
     Polygon* nowPolygon;
     QVector<PolygonShape> PolygonShapes;
-    PolygonShape testPolygonShape = PolygonShape(1,1);
+    PolygonShape testPolygonShape = PolygonShape(40,40);
 
     // 裁剪
     QPoint clipStartPoint;  // 裁剪窗口的起点
@@ -568,9 +568,58 @@ protected:
         }
     }
 
-    void drawSpecialPolygon(Point point, PolygonShape shape){
+    void drawSpecialPolygon(Point point, PolygonShape Pshape){
+        Polygon Spolygon;
+        int half_h = int(Pshape.height/2);
+        int half_w = int(Pshape.width/2);
+        Spolygon.points.push_back(Point(point.x-half_w,point.y-half_h));
+        Spolygon.points.push_back(Point(point.x-half_w,point.y+half_h));
+        Spolygon.points.push_back(Point(point.x+half_w,point.y+half_h));
+        Spolygon.points.push_back(Point(point.x+half_w,point.y-half_h));
 
+        Spolygon.closePolygon(); // 封闭当前多边形
+        shape.push_back(3);
+        polygons.push_back(Spolygon); // 保存到多边形列表
+        update();
         return;
+    }
+
+    void setSpecialPolygon(Point p)
+    {
+        bool ok;
+        int width
+            = QInputDialog::getInt(this,
+                                   tr("Set width"),
+                                   tr("Enter width(enter negetive if you want the DIY polygon):"),
+                                   50,
+                                   -10,
+                                   400,
+                                   1,
+                                   &ok);
+        if (ok) {
+            if (width < 0) {
+                if (abs(width) > PolygonShapes.size()){
+                    qDebug() << "[setSpecialPolygon] : the PolygonShape is out of range, which is " << abs(width) << "\n";
+                    return;
+                }else{
+                    drawSpecialPolygon(p, PolygonShapes[abs(++width)]);
+                }
+            } else {
+                int height = QInputDialog::getInt(this,
+                                                  tr("Set height"),
+                                                  tr("Enter height:"),
+                                                  50,
+                                                  0,
+                                                  400,
+                                                  1,
+                                                  &ok);
+                if (ok) {
+                    PolygonShape* nowPolygonShape = new PolygonShape(width,height);
+                    PolygonShapes.push_back(*nowPolygonShape);
+                    drawSpecialPolygon(p, *nowPolygonShape);
+                }
+            }
+        }
     }
 
     // 种子点填充算法
@@ -1265,6 +1314,10 @@ protected:
 
             hasStartPoint = true;
             drawing = false; // 初始化为不绘制实际直线
+        }
+
+        if (mode == SpecialPolygonMode){
+            setSpecialPolygon(Point(event->pos()));
         }
     }
 
