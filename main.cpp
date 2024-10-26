@@ -18,7 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *colorButton = ui->Color;
     colorButton->setText("SetColor");
     QPushButton *polygonButton = ui->CreatePoly;
-    polygonButton->setText("Drawpolygon");
+    polygonButton->setText("DrawPolygon");
+    QPushButton *circleButton = ui->CreateCir;
+    circleButton->setText("DrawCircle");
 
     // 连接选择变化信号(槽函数)
 
@@ -31,9 +33,13 @@ MainWindow::MainWindow(QWidget *parent)
             myshapedrawer->setCurrentLineColor(color);
         }
     });
-    // 连接多边形创建
+    // 连接自定义多边形创建
     QObject::connect(polygonButton, &QPushButton::clicked, [=]() {
         myshapedrawer->setDrawMode(SpecialPolygonMode);
+    });
+    // 连接自定义圆形创建
+    QObject::connect(circleButton, &QPushButton::clicked, [=]() {
+        myshapedrawer->setDrawMode(SpecialCircleMode);
     });
 }
 

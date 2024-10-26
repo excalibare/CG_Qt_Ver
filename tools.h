@@ -26,6 +26,7 @@ enum DrawMode {
     BezierMode,
     BsplineMode,
     SpecialPolygonMode,
+    SpecialCircleMode,
 };
 
 // 线段绘制算法

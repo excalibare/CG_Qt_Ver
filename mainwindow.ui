@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
-    <height>559</height>
+    <width>930</width>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,16 +19,16 @@
      <rect>
       <x>40</x>
       <y>50</y>
-      <width>551</width>
-      <height>461</height>
+      <width>681</width>
+      <height>561</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="Clear">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>60</y>
+      <x>750</x>
+      <y>50</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -40,8 +40,8 @@
    <widget class="QPushButton" name="Color">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>130</y>
+      <x>750</x>
+      <y>120</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -53,8 +53,21 @@
    <widget class="QPushButton" name="CreatePoly">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>200</y>
+      <x>750</x>
+      <y>190</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CreateCir">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>260</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -69,8 +82,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>810</width>
-     <height>18</height>
+     <width>930</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
