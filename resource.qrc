@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/resource">
+        <file>images/solidarrow.jpg</file>
+        <file>images/dashedarrow.jpg</file>
+    </qresource>
+</RCC>
