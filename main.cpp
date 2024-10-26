@@ -24,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
     colorButton->setText("SetColor");
 
     QAction* solidarrowAction = ui->SolidArrow;
+    QAction* solid2arrowAction = ui->Solid2Arrow;
     QAction* dashedarrowAction = ui->DashedArrow;
+    QAction* dashed2arrowAction = ui->Dashed2Arrow;
 
     // 连接选择变化信号(槽函数)
 
@@ -38,13 +40,25 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    // 连接实线箭头动作
+    // 连接实线单向箭头动作
     connect(solidarrowAction, &QAction::triggered, this, [myshapedrawer]() {
         myshapedrawer->setDrawMode(SolidArrow); // 设置为SolidArrow模式
+        myshapedrawer->set_ways(1);
     });
-    // 连接虚线箭头动作
+    // 连接实线双向箭头动作
+    connect(solid2arrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(SolidArrow);
+        myshapedrawer->set_ways(2);
+    });
+    // 连接虚线单向箭头动作
     connect(dashedarrowAction, &QAction::triggered, this, [myshapedrawer]() {
         myshapedrawer->setDrawMode(DashedArrow); // 设置为DashedArrow模式
+        myshapedrawer->set_ways(1);
+    });
+    // 连接虚线双向箭头动作
+    connect(dashed2arrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(DashedArrow);
+        myshapedrawer->set_ways(2);
     });
 }
 

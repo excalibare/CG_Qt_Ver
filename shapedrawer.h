@@ -15,6 +15,7 @@
 #include "polygon.h"
 #include "arc.h"
 #include "transmatrix.h"
+#include "arrow.h"
 
 class ShapeDrawer : public QWidget {
     // Q_OBJECT;
@@ -37,6 +38,7 @@ private:
     QPoint endPoint;            // 线段的终点
     line_Algorithm line_algo = Midpoint;  // 当前选择的直线段算法
     QVector<Line> lines;        // 存储已绘制的直线段
+    int way = 0;
     QVector<Arrow> solid_arrows;
     QVector<Arrow> dashed_arrows;
 
@@ -213,7 +215,10 @@ protected:
                 pen.setColor(arrow.colour);
                 pen.setWidth(arrow.width);
                 painter.setPen(pen);
-                drawSolidArrow(painter,arrow.line.p1(),arrow.line.p2());
+                if(arrow.way == 1)
+                    drawSolidArrow(painter,arrow.line.p1(),arrow.line.p2());
+                else
+                    draw2SolidArrow(painter,arrow.line.p1(),arrow.line.p2());
             }
             // 重绘虚线箭头
             else if(shape.at(c) == 514 && dashed_arrows.size()>i514) {
@@ -221,7 +226,10 @@ protected:
                 pen.setColor(arrow.colour);
                 pen.setWidth(arrow.width);
                 painter.setPen(pen);
-                drawDashedArrow(painter,arrow.line.p1(),arrow.line.p2());
+                if(arrow.way == 1)
+                    drawDashedArrow(painter,arrow.line.p1(),arrow.line.p2());
+                else
+                    draw2DashedArrow(painter,arrow.line.p1(),arrow.line.p2());
             }
         }
 
@@ -285,10 +293,16 @@ protected:
                     drawPreviewSolid(painter, startPoint, endPoint);
             }
             else if(mode == SolidArrow){
-                drawSolidArrow(painter, startPoint,endPoint);
+                if(way == 1)
+                    drawSolidArrow(painter, startPoint,endPoint);
+                else
+                    draw2SolidArrow(painter, startPoint,endPoint);
             }
             else if(mode == DashedArrow){
-                drawDashedArrow(painter, startPoint, endPoint);
+                if(way == 1)
+                    drawDashedArrow(painter, startPoint, endPoint);
+                else
+                    draw2DashedArrow(painter, startPoint, endPoint);
             }
             else if (mode == CircleMode) {
                 drawMidpointArc(painter, center, radius, startAngle, endAngle);
@@ -452,8 +466,38 @@ protected:
         drawArrowHead(painter, p1, p2);
     }
 
+    void draw2SolidArrow(QPainter& painter, QPoint p1, QPoint p2) {
+        int x1 = p1.x();
+        int y1 = p1.y();
+        int x2 = p2.x();
+        int y2 = p2.y();
+        int dx = abs(x2 - x1);
+        int dy = abs(y2 - y1);
+        int sx = (x1 < x2) ? 1 : -1;
+        int sy = (y1 < y2) ? 1 : -1;
+        int err = dx - dy;
+
+        // 绘制直线
+        while (x1 != x2 || y1 != y2) {
+            drawPixel(x1, y1, painter);
+            int e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x1 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y1 += sy;
+            }
+        }
+
+        // 绘制箭头
+        drawArrowHead(painter, p1, p2);
+        drawArrowHead(painter, p2, p1);
+    }
+
     // 虚线箭头 算法实现
-    void drawDashedArrow(QPainter& painter, QPoint p1, QPoint p2) {
+    void draw2DashedArrow(QPainter& painter, QPoint p1, QPoint p2) {
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
@@ -492,19 +536,44 @@ protected:
         drawArrowHead(painter, p1, p2);
         drawArrowHead(painter, p2, p1);
     }
-    void drawArrowHead(QPainter& painter, QPoint p1, QPoint p2) {
-        // 箭头的长度和角度
-        const double arrowSize = 10.0; // 箭头大小
-        double angle = atan2(p2.y() - p1.y(), p2.x() - p1.x());
 
-        // 箭头的两个边
-        QPointF arrowP1 = p2 - QPointF(arrowSize * cos(angle - M_PI / 6), arrowSize * sin(angle - M_PI / 6));
-        QPointF arrowP2 = p2 - QPointF(arrowSize * cos(angle + M_PI / 6), arrowSize * sin(angle + M_PI / 6));
+    void drawDashedArrow(QPainter& painter, QPoint p1, QPoint p2) {
+        int x1 = p1.x();
+        int y1 = p1.y();
+        int x2 = p2.x();
+        int y2 = p2.y();
+        int dx = abs(x2 - x1);
+        int dy = abs(y2 - y1);
+        int sx = (x1 < x2) ? 1 : -1;
+        int sy = (y1 < y2) ? 1 : -1;
+        int err = dx - dy;
+
+        int dashLength = 8;   // 每段虚线的长度
+        int gapLength = 8;    // 每段空白的长度
+        int totalLength = dashLength + gapLength;  // 总周期长度
+        int stepCount = 0;    // 计数步数，用于决定是否绘制
+
+        while (x1 != x2 || y1 != y2) {
+            // 只在虚线的部分绘制点
+            if (stepCount % totalLength < dashLength) {
+                drawPixel(x1, y1, painter);
+            }
+
+            int e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x1 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y1 += sy;
+            }
+
+            stepCount++;  // 增加步数计数器
+        }
 
         // 绘制箭头
-        painter.drawLine(p2, arrowP1);
-        painter.drawLine(p2, arrowP2);
-        painter.drawLine(arrowP1, arrowP2);
+        drawArrowHead(painter, p1, p2);
     }
 
     // 中点算法实现
@@ -1187,14 +1256,8 @@ protected:
 
         if (hasStartPoint)
         {
-            if (mode == LineMode) {
+            if (mode == LineMode || mode == SolidArrow || mode == DashedArrow) {
                 // 更新终点为当前鼠标位置
-                endPoint = event->pos();
-            }
-            else if(mode == SolidArrow) {
-                endPoint = event->pos();
-            }
-            else if(mode == DashedArrow) {
                 endPoint = event->pos();
             }
             else if (mode == CircleMode) {
@@ -1404,11 +1467,11 @@ protected:
             }
             else if(mode == SolidArrow){
                 endPoint = event->pos();
-                solid_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor));
+                solid_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor, way));
             }
             else if(mode == DashedArrow){
                 endPoint = event->pos();
-                dashed_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor));
+                dashed_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor,way));
             }
             else if (mode == CircleMode) {
                 endPoint = event->pos();  // 圆模式下，计算半径
@@ -1661,6 +1724,11 @@ public:
         last_k = k_value;
         //k_steps.push_back(k_value);
         update();
+    }
+
+    // 设置单向、双向箭头
+    void set_ways(int k){
+        way = k;
     }
 
     // 新增：清空画布功能

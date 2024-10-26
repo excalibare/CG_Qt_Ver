@@ -27,6 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         arc.h bezier.h fill.h line.h point.h polygon.h stdafx.h tools.h transmatrix.h
         mainwindow.h
         shapedrawer.h
+        arrow.h
 
     )
 # Define target properties for Android with Qt 6 as:
