@@ -22,15 +22,13 @@ MainWindow::MainWindow(QWidget *parent)
     clearButton->setText("Clear");
     QPushButton *colorButton = ui->Color;
     colorButton->setText("SetColor");
-    QPushButton *polygonButton = ui->CreatePoly;
-    polygonButton->setText("DrawPolygon");
-    QPushButton *circleButton = ui->CreateCir;
-    circleButton->setText("DrawCircle");
 
     QAction* solidarrowAction = ui->SolidArrow;
     QAction* solid2arrowAction = ui->Solid2Arrow;
     QAction* dashedarrowAction = ui->DashedArrow;
     QAction* dashed2arrowAction = ui->Dashed2Arrow;
+    QAction* createRectAction = ui->Createrect;
+    QAction* createCirAction = ui->CreateCir;
 
     // 连接选择变化信号(槽函数)
 
@@ -46,13 +44,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 连接自定义矩形创建
     // 点击后输入宽和高，或者在第一个窗口输入负数来选择第n个自定义图形（-1即第一个图形）
-    QObject::connect(polygonButton, &QPushButton::clicked, [=]() {
+    QObject::connect(createRectAction, &QAction::triggered, [=]() {
         myshapedrawer->setDrawMode(SpecialPolygonMode);
     });
     // 连接自定义圆形创建
     // 点击后输入半径，或者在第一个窗口输入负数来选择第n个自定义图形（-1即第一个图形）
-    QObject::connect(circleButton, &QPushButton::clicked, [=]() {
+    QObject::connect(createCirAction, &QAction::triggered, [=]() {
         myshapedrawer->setDrawMode(SpecialCircleMode);
+    });
 
     // 连接实线单向箭头动作
     connect(solidarrowAction, &QAction::triggered, this, [myshapedrawer]() {

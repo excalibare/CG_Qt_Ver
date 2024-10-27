@@ -288,7 +288,6 @@ protected:
                                  _cropPolygon[i + 1].y());
             }
         }
-
         // 如果有起点，绘制线段的预览
         if (hasStartPoint) {
             QPen pen;
@@ -1587,8 +1586,10 @@ protected:
 
         if (mode == SpecialPolygonMode) {
             setSpecialPolygon(Point(event->pos()));
+            hasStartPoint = false;
         }else if (mode == SpecialCircleMode){
             setSpecialCircle(event->pos());
+            hasStartPoint = false;
         }
     }
 

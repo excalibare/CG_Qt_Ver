@@ -4,5 +4,7 @@
         <file>images/solid2arrow.jpg</file>
         <file>images/dashedarrow.jpg</file>
         <file>images/dashed2arrow.jpg</file>
+        <file>images/rect.png</file>
+        <file>images/circle.png</file>
     </qresource>
 </RCC>
