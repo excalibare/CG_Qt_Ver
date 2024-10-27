@@ -25,6 +25,8 @@ enum DrawMode {
     TransMode,
     BezierMode,
     BsplineMode,
+    SpecialPolygonMode,
+    SpecialCircleMode,
     SolidArrow,
     DashedArrow,
 };
