@@ -13,6 +13,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ShapeDrawer *myshapedrawer = ui->widget;
+    // 顶部工具栏
+    QToolBar* tbar = ui->toolBar;
+    tbar->setMovable(false);//工具栏不可移动
+    tbar->setStyleSheet("background-color:rgb(243, 249, 255);");//背景色
+
     QPushButton *clearButton = ui->Clear;
     clearButton->setText("Clear");
     QPushButton *colorButton = ui->Color;
@@ -21,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
     polygonButton->setText("DrawPolygon");
     QPushButton *circleButton = ui->CreateCir;
     circleButton->setText("DrawCircle");
+
+    QAction* solidarrowAction = ui->SolidArrow;
+    QAction* solid2arrowAction = ui->Solid2Arrow;
+    QAction* dashedarrowAction = ui->DashedArrow;
+    QAction* dashed2arrowAction = ui->Dashed2Arrow;
 
     // 连接选择变化信号(槽函数)
 
@@ -33,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
             myshapedrawer->setCurrentLineColor(color);
         }
     });
+
     // 连接自定义矩形创建
     // 点击后输入宽和高，或者在第一个窗口输入负数来选择第n个自定义图形（-1即第一个图形）
     QObject::connect(polygonButton, &QPushButton::clicked, [=]() {
@@ -42,6 +53,26 @@ MainWindow::MainWindow(QWidget *parent)
     // 点击后输入半径，或者在第一个窗口输入负数来选择第n个自定义图形（-1即第一个图形）
     QObject::connect(circleButton, &QPushButton::clicked, [=]() {
         myshapedrawer->setDrawMode(SpecialCircleMode);
+
+    // 连接实线单向箭头动作
+    connect(solidarrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(SolidArrow); // 设置为SolidArrow模式
+        myshapedrawer->set_ways(1);
+    });
+    // 连接实线双向箭头动作
+    connect(solid2arrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(SolidArrow);
+        myshapedrawer->set_ways(2);
+    });
+    // 连接虚线单向箭头动作
+    connect(dashedarrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(DashedArrow); // 设置为DashedArrow模式
+        myshapedrawer->set_ways(1);
+    });
+    // 连接虚线双向箭头动作
+    connect(dashed2arrowAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(DashedArrow);
+        myshapedrawer->set_ways(2);
     });
 }
 

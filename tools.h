@@ -27,6 +27,8 @@ enum DrawMode {
     BsplineMode,
     SpecialPolygonMode,
     SpecialCircleMode,
+    SolidArrow,
+    DashedArrow,
 };
 
 // 线段绘制算法
