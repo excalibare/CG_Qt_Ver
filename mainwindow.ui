@@ -6,28 +6,40 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>881</width>
-    <height>698</height>
+    <width>863</width>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-image: url(:/resource/images/test_icon.png);
+                                     background-repeat: no-repeat;
+                                     background-position: center;
+                                     background-size: cover;</string>
+   </property>
    <widget class="ShapeDrawer" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>50</y>
+      <x>10</x>
+      <y>10</y>
       <width>685</width>
       <height>550</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-image: url(:/resource/images/white.png);
+                                     background-repeat: no-repeat;
+                                     background-position: center;
+                                     background-size: cover;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Clear">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>720</x>
       <y>50</y>
       <width>101</width>
       <height>51</height>
@@ -40,7 +52,7 @@
    <widget class="QPushButton" name="Color">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>720</x>
       <y>120</y>
       <width>101</width>
       <height>51</height>
@@ -53,20 +65,24 @@
    <widget class="QSpinBox" name="FrontSize">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>720</x>
       <y>190</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
    </widget>
+   <zorder>Clear</zorder>
+   <zorder>Color</zorder>
+   <zorder>FrontSize</zorder>
+   <zorder>widget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>881</width>
+     <width>863</width>
      <height>18</height>
     </rect>
    </property>

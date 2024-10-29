@@ -18,5 +18,6 @@ public:
 
 private:
   Ui::MainWindow *ui;
+    void setBackground();
 };
 #endif // MAINWINDOW_H

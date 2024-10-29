@@ -133,12 +133,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setBackground() {
+    // 使用样式表设置背景图片
+    setStyleSheet("background-image: url(:/resource/images/test_icon.png);"
+                  "background-repeat: no-repeat;"
+                  "background-position: center;"
+                  "background-size: cover;"); // 使用 cover 使图片覆盖整个窗口
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     // MainWindow w;
     MainWindow *w = new MainWindow();
-    w->setWindowIcon(QIcon("test_icon.png"));
+    w->setWindowIcon(QIcon(":/resource/images/test_icon.png"));
     w->show();
     return a.exec();
 }
