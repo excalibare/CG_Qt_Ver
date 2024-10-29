@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QWidget>
+#include <QLineEdit>
 #include "arc.h"
 #include "bezier.h"
 #include "fill.h"
@@ -20,6 +21,8 @@
 
 class ShapeDrawer : public QWidget
 {
+public:
+    int frontsize =10; // 字体大小
     // Q_OBJECT;
 private:
     // 全局
@@ -35,6 +38,7 @@ private:
     bool ctr_or_not = false;    // Bezier与Bspline是否移动控制点
     QLabel* coordLabel;         // 鼠标按下时显示实时位置的组件
     string filename; // 储存文件名称
+
 
     // 直线段
     QPoint startPoint;                   // 线段的起点
@@ -1591,6 +1595,16 @@ protected:
             setSpecialCircle(event->pos());
             hasStartPoint = false;
         }
+        else if(mode == WriteText){
+            // 创建文本框
+            QLineEdit *lineEdit = new QLineEdit(this);
+            lineEdit->setGeometry(event->x(), event->y(), 150, 30); // 设置位置和大小
+            // 设置透明背景
+            lineEdit->setStyleSheet(QString("QLineEdit { background: transparent; color: %1; font-size: %2px; }").arg("white").arg(frontsize));
+            lineEdit->show(); // 显示文本框
+            lineEdit->setFocus(); // 设置焦点
+            hasStartPoint = false;
+        }
     }
 
     // 处理鼠标松开事件
@@ -1761,6 +1775,8 @@ protected:
         update();
     }
 
+
+
     void keyReleaseEvent(QKeyEvent* event) override
     {
         if (event->key() == Qt::Key_Control) {
@@ -1857,6 +1873,46 @@ public:
         startAngle = start;
         endAngle = end;
         update(); // 触发重绘
+    }
+    void cancel(){
+        if (shape.size() > 0) {
+            switch (shape.last()) {
+            case 1:
+                lines.pop_back();
+                qDebug() << "Cancel a line.\n";
+                break;
+            case 2:
+                arcs.pop_back();
+                qDebug() << "Cancel an arc.\n";
+                break;
+            case 3:
+                polygons.pop_back();
+                qDebug() << "Cancel a polygon.\n";
+                break;
+            case 4:
+                fills.pop_back();
+                qDebug() << "Cancel a fill area.\n";
+                break;
+            case 5:
+                all_beziers.pop_back();
+                qDebug() << "Cancel a Bezier line.\n";
+                break;
+            case 6:
+                all_bsplines.pop_back();
+                qDebug() << "Cancel a B-Spline.\n";
+                break;
+            case 114:
+                solid_arrows.pop_back();
+                qDebug() << "Cancel a Solid Arrow.\n";
+                break;
+            case 514:
+                dashed_arrows.pop_back();
+                qDebug() << "Cancel a Dashed Arrow.\n";
+                break;
+            }
+            shape.pop_back();
+        }
+        update();
     }
 
     // 新增：设置B样曲线阶数

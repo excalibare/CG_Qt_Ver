@@ -29,6 +29,7 @@ enum DrawMode {
     SpecialCircleMode,
     SolidArrow,
     DashedArrow,
+    WriteText,
 };
 
 // 线段绘制算法

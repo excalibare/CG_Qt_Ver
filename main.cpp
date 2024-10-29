@@ -29,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent)
     QAction* dashed2arrowAction = ui->Dashed2Arrow;
     QAction* createRectAction = ui->Createrect;
     QAction* createCirAction = ui->CreateCir;
+    QAction* createWriteTextAction = ui->Write;
+    QAction* cancelAction = ui->Cancel;
+
+    QSpinBox *spinBox = ui->FrontSize;
+    spinBox->setRange(0, 100); // 设置范围为0到100
+    spinBox->setValue(10); // 设置默认值
 
     // 连接选择变化信号(槽函数)
 
@@ -72,6 +78,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(dashed2arrowAction, &QAction::triggered, this, [myshapedrawer]() {
         myshapedrawer->setDrawMode(DashedArrow);
         myshapedrawer->set_ways(2);
+    });
+    connect(createWriteTextAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(WriteText);
+    });
+    connect(cancelAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->cancel();
+    });
+    connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [myshapedrawer](int value){
+        myshapedrawer->frontsize = value;
     });
 }
 
