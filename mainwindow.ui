@@ -106,6 +106,10 @@
    <addaction name="Write"/>
    <addaction name="separator"/>
    <addaction name="Cancel"/>
+   <addaction name="separator"/>
+   <addaction name="savefile"/>
+   <addaction name="separator"/>
+   <addaction name="loadfile"/>
   </widget>
   <action name="SolidArrow">
    <property name="icon">
@@ -220,6 +224,34 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;撤销最后画的一个图形&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="savefile">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
+   </property>
+   <property name="text">
+    <string>保存文件</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;保存文件&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="loadfile">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::FolderOpen"/>
+   </property>
+   <property name="text">
+    <string>读取文件</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;读取已有文件&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

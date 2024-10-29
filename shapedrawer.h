@@ -1948,6 +1948,27 @@ public:
         clearMAP(MAP);
         update();
     }
+
+    // 保存文件
+    void save(QString filename)
+    {
+        qDebug() << "Start to save.\n";
+        savePolygonsToTextFile(polygons, filename);
+    }
+
+    // 读取文件
+    void load(QString filename)
+    {
+        qDebug() << "Start to load.\n";
+        polygons = loadPolygonsFromTextFile("temp.txt");
+        qDebug() << "Now Polygons's size:" << polygons.size() << ".\n";
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            shape.append(3);
+        }
+        qDebug() << "Now shape's size:" << shape.size() << ".\n";
+        update();
+    }
 };
 
 #endif // SHAPEDRAWER_H

@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     QAction* createCirAction = ui->CreateCir;
     QAction* createWriteTextAction = ui->Write;
     QAction* cancelAction = ui->Cancel;
+    QAction* saveAction = ui->savefile;
+    QAction* loadAction = ui->loadfile;
 
     QSpinBox *spinBox = ui->FrontSize;
     spinBox->setRange(0, 100); // 设置范围为0到100
@@ -85,6 +87,42 @@ MainWindow::MainWindow(QWidget *parent)
     connect(cancelAction, &QAction::triggered, this, [myshapedrawer]() {
         myshapedrawer->cancel();
     });
+    connect(saveAction, &QAction::triggered, this, [this, myshapedrawer]() {
+        // 弹出输入对话框让用户输入文件名称
+        bool ok;
+        QString fileName = QInputDialog::getText(this, tr("输入文件名称"),
+                                                 tr("文件名称:"), QLineEdit::Normal,
+                                                 "temp.txt", &ok);
+
+        // 检查用户是否点击了“确定”并输入了有效的文件名
+        if (ok && !fileName.isEmpty()) {
+            // 可以在这里设置文件保存的路径
+            QString filePath = QFileDialog::getSaveFileName(this, tr("保存文件"), fileName, tr("所有文件 (*)"));
+
+            // 检查文件路径是否有效
+            if (!filePath.isEmpty()) {
+                // 处理选择的文件，例如显示文件名
+                QMessageBox::information(this, tr("保存成功！！！"), filePath);
+
+                // 调用 myshapedrawer 的保存函数
+                myshapedrawer->save(filePath);
+            }
+        }
+    });
+    connect(loadAction, &QAction::triggered, this, [this, myshapedrawer]() {
+        // 打开文件选择对话框
+        QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"), "", tr("所有文件 (*)"));
+
+        // 检查文件名是否为空
+        if (!fileName.isEmpty()) {
+            // 处理选择的文件，例如显示文件名
+            QMessageBox::information(this, tr("选择的文件"), fileName);
+        }
+        myshapedrawer->load(fileName);
+    });
+
+
+    // 连接字体大小选择输入
     connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [myshapedrawer](int value){
         myshapedrawer->frontsize = value;
     });
