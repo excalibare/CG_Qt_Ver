@@ -5,6 +5,8 @@
 #include <QPoint>
 #include "point.h"
 #include <vector>
+#include <QFile>
+#include <QDataStream>
 using namespace std;
 
 // 将Point类型的点转换为QPoint
@@ -128,4 +130,65 @@ Polygon QV2P(QVector<QPoint> q)
     res.points.push_back(res.points[0]);
     return res;
 }
+
+// 保存 Polygon 向量到文本文件
+void savePolygonsToTextFile(const QVector<Polygon>& polygons, const QString& filename) {
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件进行写入:" << filename;
+        return;
+    }
+
+    QTextStream out(&file);
+    out << polygons.size() << "\n"; // 写入多边形数量
+
+    for (const auto& polygon : polygons) {
+        out << polygon.points.size() << "\n"; // 写入顶点数量
+        for (const auto& point : polygon.points) {
+            out << point.x << " " << point.y << "\n"; // 写入每个顶点
+        }
+        out << polygon.color.red() << " "
+            << polygon.color.green() << " "
+            << polygon.color.blue() << " "
+            << polygon.color.alpha() << "\n"; // 写入颜色
+    }
+
+    file.close();
+}
+
+// 从文本文件加载 Polygon 向量
+QVector<Polygon> loadPolygonsFromTextFile(const QString& filename) {
+    QVector<Polygon> polygons;
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件进行读取:" << filename;
+        return polygons; // 返回空 QVector
+    }
+
+    QTextStream in(&file);
+    int numPolygons;
+    in >> numPolygons; // 读取多边形数量
+
+    for (int i = 0; i < numPolygons; ++i) {
+        Polygon polygon;
+        int numPoints;
+        in >> numPoints; // 读取顶点数量
+
+        for (int j = 0; j < numPoints; ++j) {
+            float x, y;
+            in >> x >> y; // 读取每个顶点
+            polygon.addPoint(Point(x, y));
+        }
+
+        int r, g, b, a;
+        in >> r >> g >> b >> a; // 读取颜色
+        polygon.color = QColor(r, g, b, a);
+
+        polygons.append(polygon);
+    }
+
+    file.close();
+    return polygons;
+}
+
 #endif // !POLYGON_H

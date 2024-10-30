@@ -25,6 +25,11 @@ enum DrawMode {
     TransMode,
     BezierMode,
     BsplineMode,
+    SpecialPolygonMode,
+    SpecialCircleMode,
+    SolidArrow,
+    DashedArrow,
+    WriteText,
 };
 
 // 线段绘制算法

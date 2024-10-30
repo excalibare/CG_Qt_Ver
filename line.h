@@ -15,6 +15,7 @@ struct Line {
 
     Line(QPoint p1, QPoint p2, int w, QColor c, line_Algorithm a) : line(p1, p2), width(w), colour(c), alg(a) {}
 };
+
 // 绘制预览实线(不更新MAP)
 void drawPreviewSolid(QPainter& painter, QPoint p1, QPoint p2)
 {

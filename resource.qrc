@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/resource">
+        <file>images/solidarrow.jpg</file>
+        <file>images/solid2arrow.jpg</file>
+        <file>images/dashedarrow.jpg</file>
+        <file>images/dashed2arrow.jpg</file>
+        <file>images/rect.png</file>
+        <file>images/circle.png</file>
+        <file>images/test_icon.png</file>
+	<file>images/white.png</file>
+    </qresource>
+</RCC>
