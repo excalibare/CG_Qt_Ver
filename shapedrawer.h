@@ -791,7 +791,7 @@ protected:
             = QInputDialog::getInt(this,
                                    tr("Set width"),
                                    tr("Enter width(enter negetive if you want the DIY polygon):"),
-                                   50,
+                                   100,
                                    -10,
                                    400,
                                    1,
@@ -1593,7 +1593,7 @@ protected:
         } else if (mode == WriteText) {
             // 创建文本框
             QLineEdit* lineEdit = new QLineEdit(this);
-            lineEdit->setGeometry(event->x(), event->y(), 150, 30); // 设置位置和大小
+            lineEdit->setGeometry(event->x(), event->y(), 90, 40); // 设置位置和大小
             // 设置透明背景
             lineEdit->setStyleSheet(
                 QString("QLineEdit { background: transparent; color: %1; font-size: %2px; }")
@@ -1956,29 +1956,92 @@ public:
     {
         qDebug() << "Start to save.\n";
         savePolygonsToTextFile(polygons, filename);
-        //saveArrowsToTextFile(solid_arrows,filename);
-        //saveArrowsToTextFile(dashed_arrows,filename);
+        saveArrowsToTextFile(solid_arrows,filename);
+        saveArrowsToTextFile(dashed_arrows,filename);
     }
 
     // 读取文件
     void load(QString filename)
     {
-        qDebug() << "Start to load dashed_arrows.\n";
-        dashed_arrows.append(loadArrowsFromTextFile("temp.txt"));
-        qDebug() << "Now dash arrows' size:" << dashed_arrows.size() << ".\n";
+        loadfromfile(filename);
+        update();
+    }
+    void loadfromfile(const QString& filename){
+        QFile file(filename);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "无法打开文件进行读取:" << filename;
+            return; // 直接返回
+        }
 
-        qDebug() << "Start to load solid_arrows.\n";
-        solid_arrows.append(loadArrowsFromTextFile("temp.txt"));
-        qDebug() << "Now solid arrows' size:" << solid_arrows.size() << ".\n";
+        QTextStream in(&file);
+        int numPolygons;
+        in >> numPolygons; // 读取多边形数量
 
-        qDebug() << "Start to load Poly.\n";
-        polygons.append(loadPolygonsFromTextFile("temp.txt"));
-        qDebug() << "Now Polygons's size:" << polygons.size() << ".\n";
-        for (int i = 0; i < polygons.size(); i++) {
+        for (int i = 0; i < numPolygons; ++i) {
+            Polygon polygon;
+            int numPoints;
+            in >> numPoints; // 读取顶点数量
+
+            for (int j = 0; j < numPoints; ++j) {
+                float x, y;
+                in >> x >> y; // 读取每个顶点
+                polygon.addPoint(Point(x, y));
+            }
+
+            int r, g, b, a;
+            in >> r >> g >> b >> a; // 读取颜色
+            polygon.color = QColor(r, g, b, a);
+
+            polygons.append(polygon);
             shape.append(3);
         }
-        qDebug() << "Now shape's size:" << shape.size() << ".\n";
-        update();
+
+        int numArrows;
+        in >> numArrows; // 读取多边形数量
+        for (int i = 0; i < numArrows; ++i) {
+            Arrow arrow;
+
+            int p1_x, p1_y, p2_x, p2_y, wi, wa;
+            int r, g, b, a;
+            in >> p1_x >> p1_y >> p2_x >> p2_y; // 读取line
+            qDebug() << p1_x << " " << p1_y << " " << p2_x << " " << p2_y << "\n";
+            in >> wi >> wa; // 读取width&way
+            qDebug() << wi << " " << wa << "\n";
+            in >> r >> g >> b >> a;
+            qDebug() << r << " " << g << " " << b << " " << a << "\n";
+
+            arrow.line = QLine(QPoint(p1_x,p1_y),QPoint(p2_x,p2_y));
+            arrow.width = wi;
+            arrow.way = wa;
+            arrow.color = QColor(r, g, b, a);
+
+            solid_arrows.append(arrow);
+            shape.append(114);
+        }
+
+        in >> numArrows; // 读取多边形数量
+        for (int i = 0; i < numArrows; ++i) {
+            Arrow arrow;
+
+            int p1_x, p1_y, p2_x, p2_y, wi, wa;
+            int r, g, b, a;
+            in >> p1_x >> p1_y >> p2_x >> p2_y; // 读取line
+            qDebug() << p1_x << " " << p1_y << " " << p2_x << " " << p2_y << "\n";
+            in >> wi >> wa; // 读取width&way
+            qDebug() << wi << " " << wa << "\n";
+            in >> r >> g >> b >> a;
+            qDebug() << r << " " << g << " " << b << " " << a << "\n";
+
+            arrow.line = QLine(QPoint(p1_x,p1_y),QPoint(p2_x,p2_y));
+            arrow.width = wi;
+            arrow.way = wa;
+            arrow.color = QColor(r, g, b, a);
+
+            dashed_arrows.append(arrow);
+            shape.append(514);
+        }
+
+        file.close();
     }
 };
 

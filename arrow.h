@@ -38,7 +38,7 @@ void drawArrowHead(QPainter& painter, QPoint p1, QPoint p2) {
 // 保存 arrow 到文本文件
 void saveArrowsToTextFile(const QVector<Arrow>& arrows, const QString& filename) {
     QFile file(filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
         qDebug() << "无法打开文件进行写入:" << filename;
         return;
     }
@@ -83,8 +83,11 @@ QVector<Arrow> loadArrowsFromTextFile(const QString& filename) {
         int p1_x, p1_y, p2_x, p2_y, wi, wa;
         int r, g, b, a;
         in >> p1_x >> p1_y >> p2_x >> p2_y; // 读取line
+        qDebug() << p1_x << " " << p1_y << " " << p2_x << " " << p2_y << "\n";
         in >> wi >> wa; // 读取width&way
+        qDebug() << wi << " " << wa << "\n";
         in >> r >> g >> b >> a;
+        qDebug() << r << " " << g << " " << b << " " << a << "\n";
 
         arrow.line = QLine(QPoint(p1_x,p1_y),QPoint(p2_x,p2_y));
         arrow.width = wi;
@@ -93,6 +96,22 @@ QVector<Arrow> loadArrowsFromTextFile(const QString& filename) {
 
         arrows.append(arrow);
     }
+    // while (!in.atEnd()) { // 逐行读取文件，直到结束
+    //     Arrow arrow;
+
+    //     int p1_x, p1_y, p2_x, p2_y, wi, wa;
+    //     int r, g, b, a;
+    //     in >> p1_x >> p1_y >> p2_x >> p2_y; // 读取line
+    //     in >> wi >> wa; // 读取width&way
+    //     in >> r >> g >> b >> a;
+
+    //     arrow.line = QLine(QPoint(p1_x, p1_y), QPoint(p2_x, p2_y));
+    //     arrow.width = wi;
+    //     arrow.way = wa;
+    //     arrow.color = QColor(r, g, b, a);
+
+    //     arrows.append(arrow);
+    // }
 
     file.close();
     return arrows;
