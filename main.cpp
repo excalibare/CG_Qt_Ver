@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     QAction* cancelAction = ui->Cancel;
     QAction* saveAction = ui->savefile;
     QAction* loadAction = ui->loadfile;
+    QAction* moveAction = ui->move;
 
     QSpinBox *spinBox = ui->FrontSize;
     spinBox->setRange(0, 100); // 设置范围为0到100
@@ -119,6 +120,9 @@ MainWindow::MainWindow(QWidget *parent)
             QMessageBox::information(this, tr("选择的文件"), fileName);
         }
         myshapedrawer->load(fileName);
+    });
+    connect(moveAction, &QAction::triggered, this, [myshapedrawer]() {
+        myshapedrawer->setDrawMode(TransMode);
     });
 
 
