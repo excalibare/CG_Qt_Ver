@@ -3,9 +3,10 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QWidget>
 #include <QLineEdit>
+#include <QWidget>
 #include "arc.h"
+#include "arrow.h"
 #include "bezier.h"
 #include "fill.h"
 #include "line.h"
@@ -14,15 +15,13 @@
 #include "stdafx.h"
 #include "tools.h"
 #include "transmatrix.h"
-#include "arrow.h"
 #include <cmath>
 #include <vector>
-
 
 class ShapeDrawer : public QWidget
 {
 public:
-    int frontsize =10; // 字体大小
+    int frontsize = 10; // 字体大小
     // Q_OBJECT;
 private:
     // 全局
@@ -31,14 +30,14 @@ private:
     int lineWidth = 5;          // 存储线条宽度
     bool hasStartPoint = false; // 是否有起点
     bool drawing = false;       // 是否正在绘制（用来控制鼠标释放时的动作）
-    QColor currentLineColor = Qt::black;    // 当前线条颜色
-    QVector<int> shape;          // 控制图形的重绘顺序，防止顺序错乱 1.直线 2.圆弧或圆 3.多边形 4.种子点 5.Bezier 6.Bspline 114.实线箭头 514.虚线箭头
+    QColor currentLineColor = Qt::black; // 当前线条颜色
+    QVector<int>
+        shape; // 控制图形的重绘顺序，防止顺序错乱 1.直线 2.圆弧或圆 3.多边形 4.种子点 5.Bezier 6.Bspline 114.实线箭头 514.虚线箭头
     float XL = 0, XR = 800, YB = 0, YT = 550;
     Point _begin = Point(0, 0); // 拖拽的参考坐标，方便计算位移
     bool ctr_or_not = false;    // Bezier与Bspline是否移动控制点
     QLabel* coordLabel;         // 鼠标按下时显示实时位置的组件
-    string filename; // 储存文件名称
-
+    string filename;            // 储存文件名称
 
     // 直线段
     QPoint startPoint;                   // 线段的起点
@@ -62,7 +61,7 @@ private:
     Polygon currentPolygon;    // 当前正在绘制的多边形
     vector<Fill> fills;        // 存储多个填充区域
     QStack<Point> stack;
-    Polygon* nowPolygon;    // 当前正在绘制的多边形
+    Polygon* nowPolygon;                 // 当前正在绘制的多边形
     QVector<PolygonShape> PolygonShapes; // 储存DIY多边形的数据
 
     // 裁剪
@@ -108,7 +107,7 @@ protected:
     void paintEvent(QPaintEvent* event) override
     {
         // 各类图形的计数器，控制从vector中取出的顺序
-        int i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0,i114 = 0,i514 = 0;
+        int i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0, i6 = 0, i114 = 0, i514 = 0;
         clearMAP(MAP);
         QPainter painter(this);
 
@@ -219,26 +218,26 @@ protected:
                 }
             }
             // 重绘实线箭头
-            else if(shape.at(c) == 114 && solid_arrows.size()>i114) {
+            else if (shape.at(c) == 114 && solid_arrows.size() > i114) {
                 const Arrow& arrow = solid_arrows.at(i114++);
-                pen.setColor(arrow.colour);
+                pen.setColor(arrow.color);
                 pen.setWidth(arrow.width);
                 painter.setPen(pen);
-                if(arrow.way == 1)
-                    drawSolidArrow(painter,arrow.line.p1(),arrow.line.p2());
+                if (arrow.way == 1)
+                    drawSolidArrow(painter, arrow.line.p1(), arrow.line.p2());
                 else
-                    draw2SolidArrow(painter,arrow.line.p1(),arrow.line.p2());
+                    draw2SolidArrow(painter, arrow.line.p1(), arrow.line.p2());
             }
             // 重绘虚线箭头
-            else if(shape.at(c) == 514 && dashed_arrows.size()>i514) {
+            else if (shape.at(c) == 514 && dashed_arrows.size() > i514) {
                 const Arrow& arrow = dashed_arrows.at(i514++);
-                pen.setColor(arrow.colour);
+                pen.setColor(arrow.color);
                 pen.setWidth(arrow.width);
                 painter.setPen(pen);
-                if(arrow.way == 1)
-                    drawDashedArrow(painter,arrow.line.p1(),arrow.line.p2());
+                if (arrow.way == 1)
+                    drawDashedArrow(painter, arrow.line.p1(), arrow.line.p2());
                 else
-                    draw2DashedArrow(painter,arrow.line.p1(),arrow.line.p2());
+                    draw2DashedArrow(painter, arrow.line.p1(), arrow.line.p2());
             }
         }
 
@@ -305,20 +304,17 @@ protected:
                     drawPreviewDash(painter, startPoint, endPoint);
                 else
                     drawPreviewSolid(painter, startPoint, endPoint);
-            }
-            else if(mode == SolidArrow){
-                if(way == 1)
-                    drawSolidArrow(painter, startPoint,endPoint);
+            } else if (mode == SolidArrow) {
+                if (way == 1)
+                    drawSolidArrow(painter, startPoint, endPoint);
                 else
-                    draw2SolidArrow(painter, startPoint,endPoint);
-            }
-            else if(mode == DashedArrow){
-                if(way == 1)
+                    draw2SolidArrow(painter, startPoint, endPoint);
+            } else if (mode == DashedArrow) {
+                if (way == 1)
                     drawDashedArrow(painter, startPoint, endPoint);
                 else
                     draw2DashedArrow(painter, startPoint, endPoint);
-            }
-            else if (mode == CircleMode) {
+            } else if (mode == CircleMode) {
                 drawMidpointArc(painter, center, radius, startAngle, endAngle);
             } else if (mode == ArcMode) {
                 if (startAngle <= endAngle)
@@ -454,7 +450,8 @@ protected:
     }
 
     // 实线箭头 算法实现
-    void drawSolidArrow(QPainter& painter, QPoint p1, QPoint p2) {
+    void drawSolidArrow(QPainter& painter, QPoint p1, QPoint p2)
+    {
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
@@ -483,7 +480,8 @@ protected:
         drawArrowHead(painter, p1, p2);
     }
 
-    void draw2SolidArrow(QPainter& painter, QPoint p1, QPoint p2) {
+    void draw2SolidArrow(QPainter& painter, QPoint p1, QPoint p2)
+    {
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
@@ -514,7 +512,8 @@ protected:
     }
 
     // 虚线箭头 算法实现
-    void draw2DashedArrow(QPainter& painter, QPoint p1, QPoint p2) {
+    void draw2DashedArrow(QPainter& painter, QPoint p1, QPoint p2)
+    {
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
@@ -525,10 +524,10 @@ protected:
         int sy = (y1 < y2) ? 1 : -1;
         int err = dx - dy;
 
-        int dashLength = 8;   // 每段虚线的长度
-        int gapLength = 8;    // 每段空白的长度
-        int totalLength = dashLength + gapLength;  // 总周期长度
-        int stepCount = 0;    // 计数步数，用于决定是否绘制
+        int dashLength = 8;                       // 每段虚线的长度
+        int gapLength = 8;                        // 每段空白的长度
+        int totalLength = dashLength + gapLength; // 总周期长度
+        int stepCount = 0;                        // 计数步数，用于决定是否绘制
 
         while (x1 != x2 || y1 != y2) {
             // 只在虚线的部分绘制点
@@ -546,7 +545,7 @@ protected:
                 y1 += sy;
             }
 
-            stepCount++;  // 增加步数计数器
+            stepCount++; // 增加步数计数器
         }
 
         // 绘制箭头
@@ -554,7 +553,8 @@ protected:
         drawArrowHead(painter, p2, p1);
     }
 
-    void drawDashedArrow(QPainter& painter, QPoint p1, QPoint p2) {
+    void drawDashedArrow(QPainter& painter, QPoint p1, QPoint p2)
+    {
         int x1 = p1.x();
         int y1 = p1.y();
         int x2 = p2.x();
@@ -565,10 +565,10 @@ protected:
         int sy = (y1 < y2) ? 1 : -1;
         int err = dx - dy;
 
-        int dashLength = 8;   // 每段虚线的长度
-        int gapLength = 8;    // 每段空白的长度
-        int totalLength = dashLength + gapLength;  // 总周期长度
-        int stepCount = 0;    // 计数步数，用于决定是否绘制
+        int dashLength = 8;                       // 每段虚线的长度
+        int gapLength = 8;                        // 每段空白的长度
+        int totalLength = dashLength + gapLength; // 总周期长度
+        int stepCount = 0;                        // 计数步数，用于决定是否绘制
 
         while (x1 != x2 || y1 != y2) {
             // 只在虚线的部分绘制点
@@ -586,7 +586,7 @@ protected:
                 y1 += sy;
             }
 
-            stepCount++;  // 增加步数计数器
+            stepCount++; // 增加步数计数器
         }
 
         // 绘制箭头
@@ -853,8 +853,8 @@ protected:
                     drawSpecialCircle(p, CircleShapes[abs(++radius)]);
                 }
             } else {
-                    CircleShapes.push_back(radius);
-                    drawSpecialCircle(p, radius);
+                CircleShapes.push_back(radius);
+                drawSpecialCircle(p, radius);
             }
         }
     }
@@ -1398,8 +1398,7 @@ protected:
                                                 (trM * (transRectTag->bottomRight())).Gety()));
         }
 
-        if (hasStartPoint)
-        {
+        if (hasStartPoint) {
             if (mode == LineMode || mode == SolidArrow || mode == DashedArrow) {
                 // 更新终点为当前鼠标位置
                 endPoint = event->pos();
@@ -1466,19 +1465,16 @@ protected:
                 startPoint = event->pos();
                 endPoint = startPoint; // 初始化终点为起点
                 shape.push_back(1);
-            }
-            else if (mode == SolidArrow){
+            } else if (mode == SolidArrow) {
                 startPoint = event->pos();
-                endPoint = startPoint;      // 初始化终点为起点
+                endPoint = startPoint; // 初始化终点为起点
                 shape.push_back(114);
-            }
-            else if (mode == DashedArrow) {
+            } else if (mode == DashedArrow) {
                 startPoint = event->pos();
-                endPoint = startPoint;      // 初始化终点为起点
+                endPoint = startPoint; // 初始化终点为起点
                 shape.push_back(514);
-            }
-            else if (mode == CircleMode) {
-                center = event->pos();      // 记录圆心
+            } else if (mode == CircleMode) {
+                center = event->pos(); // 记录圆心
                 hasStartPoint = true;
                 shape.push_back(2);
             } else if (mode == ArcMode && counter == 0) {
@@ -1591,17 +1587,19 @@ protected:
         if (mode == SpecialPolygonMode) {
             setSpecialPolygon(Point(event->pos()));
             hasStartPoint = false;
-        }else if (mode == SpecialCircleMode){
+        } else if (mode == SpecialCircleMode) {
             setSpecialCircle(event->pos());
             hasStartPoint = false;
-        }
-        else if(mode == WriteText){
+        } else if (mode == WriteText) {
             // 创建文本框
-            QLineEdit *lineEdit = new QLineEdit(this);
+            QLineEdit* lineEdit = new QLineEdit(this);
             lineEdit->setGeometry(event->x(), event->y(), 150, 30); // 设置位置和大小
             // 设置透明背景
-            lineEdit->setStyleSheet(QString("QLineEdit { background: transparent; color: %1; font-size: %2px; }").arg("white").arg(frontsize));
-            lineEdit->show(); // 显示文本框
+            lineEdit->setStyleSheet(
+                QString("QLineEdit { background: transparent; color: %1; font-size: %2px; }")
+                    .arg("white")
+                    .arg(frontsize));
+            lineEdit->show();     // 显示文本框
             lineEdit->setFocus(); // 设置焦点
             hasStartPoint = false;
         }
@@ -1614,18 +1612,16 @@ protected:
             if (mode == LineMode) {
                 endPoint = event->pos(); // 直线模式下，松开设定终点
                 lines.append(Line(startPoint, endPoint, lineWidth, currentLineColor, line_algo));
-            }
-            else if(mode == SolidArrow){
+            } else if (mode == SolidArrow) {
                 endPoint = event->pos();
                 solid_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor, way));
-            }
-            else if(mode == DashedArrow){
+            } else if (mode == DashedArrow) {
                 endPoint = event->pos();
-                dashed_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor,way));
-            }
-            else if (mode == CircleMode) {
-                endPoint = event->pos();  // 圆模式下，计算半径
-                radius = std::sqrt(std::pow(endPoint.x() - center.x(), 2) + std::pow(endPoint.y() - center.y(), 2));
+                dashed_arrows.append(Arrow(startPoint, endPoint, lineWidth, currentLineColor, way));
+            } else if (mode == CircleMode) {
+                endPoint = event->pos(); // 圆模式下，计算半径
+                radius = std::sqrt(std::pow(endPoint.x() - center.x(), 2)
+                                   + std::pow(endPoint.y() - center.y(), 2));
                 arcs.append(Arc(center, radius, startAngle, endAngle, lineWidth, currentLineColor));
             } else if (mode == ArcMode && counter == 0) {
                 counter += 1;
@@ -1768,14 +1764,20 @@ protected:
                     all_bsplines.pop_back();
                     qDebug() << "Cancel a B-Spline.\n";
                     break;
+                case 114:
+                    solid_arrows.pop_back();
+                    qDebug() << "Cancel a Solid Arrow.\n";
+                    break;
+                case 514:
+                    dashed_arrows.pop_back();
+                    qDebug() << "Cancel a Dashed Arrow.\n";
+                    break;
                 }
                 shape.pop_back();
             }
         }
         update();
     }
-
-
 
     void keyReleaseEvent(QKeyEvent* event) override
     {
@@ -1874,7 +1876,9 @@ public:
         endAngle = end;
         update(); // 触发重绘
     }
-    void cancel(){
+
+    void cancel()
+    {
         if (shape.size() > 0) {
             switch (shape.last()) {
             case 1:
@@ -1924,9 +1928,7 @@ public:
     }
 
     // 设置单向、双向箭头
-    void set_ways(int k){
-        way = k;
-    }
+    void set_ways(int k) { way = k; }
 
     // 新增：清空画布功能
     void Clear()
@@ -1954,16 +1956,25 @@ public:
     {
         qDebug() << "Start to save.\n";
         savePolygonsToTextFile(polygons, filename);
+        //saveArrowsToTextFile(solid_arrows,filename);
+        //saveArrowsToTextFile(dashed_arrows,filename);
     }
 
     // 读取文件
     void load(QString filename)
     {
-        qDebug() << "Start to load.\n";
-        polygons = loadPolygonsFromTextFile("temp.txt");
+        qDebug() << "Start to load dashed_arrows.\n";
+        dashed_arrows.append(loadArrowsFromTextFile("temp.txt"));
+        qDebug() << "Now dash arrows' size:" << dashed_arrows.size() << ".\n";
+
+        qDebug() << "Start to load solid_arrows.\n";
+        solid_arrows.append(loadArrowsFromTextFile("temp.txt"));
+        qDebug() << "Now solid arrows' size:" << solid_arrows.size() << ".\n";
+
+        qDebug() << "Start to load Poly.\n";
+        polygons.append(loadPolygonsFromTextFile("temp.txt"));
         qDebug() << "Now Polygons's size:" << polygons.size() << ".\n";
-        for (int i = 0; i < polygons.size(); i++)
-        {
+        for (int i = 0; i < polygons.size(); i++) {
             shape.append(3);
         }
         qDebug() << "Now shape's size:" << shape.size() << ".\n";
